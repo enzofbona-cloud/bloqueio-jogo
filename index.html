@@ -492,7 +492,7 @@ async function onElo(){if(!AU.uid)return;try{const q=await sel("profiles?id=eq."
 function xpInfo(g,w){let rem=g*25+w*25,L=1;while(rem>=400+100*L){rem-=400+100*L;L++}return{L,rem,need:400+100*L}}
 const nf=n=>Number(n).toLocaleString(cfg.lang=="en"?"en-US":cfg.lang=="es"?"es-ES":"pt-BR");
 async function onPos(){if(!AU.uid)return;try{const d=await rpc("leaderboard",{});ON.pos=d.pos;ON.tot=d.total;const k=new Date().toISOString().slice(0,10),sn=ld("rkpos",{});if(sn.cd!=k){sn.pv=sn.cur;sn.cd=k}sn.cur=d.pos;save("rkpos",sn);ON.dpos=sn.pv!=null?sn.pv-d.pos:null;menuRt()}catch(e){}}
-const PK=[{id:"shP1",pr:"2,99",h:8,u:4,ic:"💡"},{id:"shP2",pr:"5,99",h:22,u:10,ic:"✨",tag:"shPop",sv:25},{id:"shP3",pr:"12,99",h:50,u:25,ic:"👑",tag:"shBest",sv:30}];
+const PK=[{id:"shP1",pr:"2,99",h:8,u:4,ic:"💡"},{id:"shP2",pr:"5,99",h:18,u:8,ic:"✨",tag:"shPop",sv:8},{id:"shP3",pr:"14,99",h:48,u:22,ic:"👑",tag:"shBest",sv:14}];
 function openShop(){const v=prof.inv;onDlg(`<b>🛍 ${ot("shT")}</b><p class="shp">${ot("shPitch")}</p>`+PK.map((k,i)=>`<div class="pkc pk${i+1}">${k.tag?`<div class="pkr">${ot(k.tag)}${k.sv?" · "+ot("shSave",k.sv):""}</div>`:""}<div class="pkb"><span><i>💡</i><b>${k.h}</b><em>${ot("shHints")}</em><small>${ot("shTipH")}</small></span><span><i>↩</i><b>${k.u}</b><em>${ot("shUndos")}</em><small>${ot("shTipU")}</small></span></div><button class="pkbuy" onclick="shopBuy('${k.id}')">${ot("shBuy")} · R$ ${k.pr}</button></div>`).join("")+`<p id="shn" style="font-size:13px;opacity:.85;min-height:18px"></p><p style="font-size:12px;opacity:.7;margin:0">💡 ${v.h} · ↩ ${v.u}</p><button onclick="dl.close()">${ot("back")}</button>`)}
 function shopBuy(id){const e=document.getElementById("shn");if(e)e.textContent=ot("shSoon")}
 /* ---------- campanha ---------- */
