@@ -410,7 +410,7 @@ const na=Object.keys(prof.ach||{}).filter(k=>prof.ach[k]).length;$("acn").textCo
 ["nHome","nPlay","nRk","nHi","nFr","nSet"].forEach((k,n)=>$("tb"+n).textContent=ot(k));
 $("b5").classList.toggle("nw2",!prof.daily.stars[todayKey()]);$("b1").classList.toggle("glow",!prof.tut&&!prof.games)}
 
-async function onEloInfo(){const el=$("eld");if(!el)return;try{const d=await rpc("sync_match",{p_match:ON.lastMid||ON.mid,p_ply:99999,p_chat:99999999});if(!d||!$("eld"))return;
+async function onEloInfo(){const el=$("eld");if(!el)return;try{let d=null;for(let n=0;n<6;n++){d=await rpc("sync_match",{p_match:ON.lastMid||ON.mid,p_ply:99999,p_chat:99999999});if(!$("eld"))return;if(d&&(d.kind=="friend"||(ON.my?d.award1:d.award0)))break;await new Promise(r=>setTimeout(r,800))}if(!d||!$("eld"))return;
 if(d.kind=="friend"){$("eld").innerHTML=`<small>${ot("noTr")}</small>`;return}
 const a=ON.my?d.award1:d.award0;if(!a)return;const b0=a.before,b1=a.trophies,i0=lgIdx(b0),i1=lgIdx(b1),tot=a.total;
 let h=`<div class="aw"><div class="awn${tot<0?" neg":""}" id="awn">${tot>0?"+":""}0 🏆</div>`;
