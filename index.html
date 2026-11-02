@@ -303,7 +303,7 @@ function onSay(i){if(ON.mid)rpc("send_chat",{p_match:ON.mid,p_i:i}).catch(()=>{}
 function leaveNow(){const m=ON.mid;if(m)rpc("resign",{p_match:m}).catch(()=>{});save("bqm",null);S.over=1;menu()}
 function onResign(){if(S.over!=null)return;if(ON.mid)rpc("resign",{p_match:ON.mid}).catch(()=>{});endGame(1,"res")}
 /* --- pontos / menu --- */
-const LG=[0,150,400,750,1200,1800],LGI=["🥉","🥈","🥇","💠","💎","👑"];
+const LG=[0,300,800,1500,2200,3000],LGI=["🥉","🥈","🥇","💠","💎","👑"];
 const lgIdx=t=>{let i=0;LG.forEach((v,k)=>{if(t>=v)i=k});return i};
 const lgP=t=>{const i=lgIdx(t);return i>=5?1:(t-LG[i])/(LG[i+1]-LG[i])};
 const lgN=i=>ot("lg")[i];
