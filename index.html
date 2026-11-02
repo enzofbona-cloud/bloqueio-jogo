@@ -74,7 +74,7 @@ dialog{border:1px solid var(--gold);border-radius:10px;padding:22px 20px;backgro
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.cg button{margin:0!important;padding:12px 6px!important;font:600 16px "Cormorant Garamond",serif;letter-spacing:0;text-transform:none}
 .bub{position:fixed;left:50%;transform:translateX(-50%);background:#eadfc4;color:#2a1a14;border:1px solid var(--gold);padding:6px 16px;border-radius:6px;font:700 18px "Cormorant Garamond",serif;z-index:5;display:none;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.6);max-width:90%;text-align:center}#bo{top:150px}#bm{bottom:200px}
 .pbar{display:block;height:7px;margin-top:5px;background:#0f0a07;border:1px solid #5a4630;border-radius:5px;overflow:hidden}.pbar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#8a6a2a,#e8c76a);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}.aw{text-align:center}.awn{font:700 42px Cinzel,serif;color:var(--g);animation:pop .5s ease-out}.awn.neg{color:#c97b6a}.awl{font-size:15px;margin:2px 0;opacity:.95}.awup{margin:8px 0 2px;padding:6px;border:1px solid var(--gold);border-radius:6px;font:700 17px Cinzel,serif;color:var(--g);animation:pop .6s ease-out}.lbr{display:flex;gap:8px;padding:5px 8px;text-align:left;border-bottom:1px solid #3a2c20}.lbr.me{background:#2c2017;color:var(--g)}.lbr span:nth-child(2){flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-</style><meta name="theme-color" content="#17100c">
+.r2 .mb small{display:block;font-size:12px}#b4,#b1,#bc{display:none!important}.r3 #b5{max-width:70%;margin:0 auto;flex:none;width:70%}.r3{justify-content:center}</style><meta name="theme-color" content="#17100c">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bloqueio">
@@ -355,7 +355,7 @@ async function onCreate(){try{onClean();ON.qk="casual";onDlg(`<b>${ot("conn")}</
 onDlg(`<b>${ot("friend")}</b><p>${ot("wait")}</p><p style="font:700 44px Cinzel,serif;letter-spacing:8px;color:var(--g);margin:14px 0">${esc(code)}</p><button onclick="onClean();dl.close()">${ot("cancel")}</button>`);
 ON.wait=setInterval(async()=>{try{const q=await sel("rooms?code=eq."+encodeURIComponent(code)+"&select=match_id");if(q&&q[0]&&q[0].match_id){clearInterval(ON.wait);onStart(q[0].match_id)}}catch(e){}},2000)}catch(e){onFail(e,"onCreate()")}}
 async function onJoin(){const c=($("jc").value||"").trim().toUpperCase();if(c.length<4)return;try{onDlg(`<b>${ot("conn")}</b>`);onStart(await rpc("join_room",{p_code:c}))}catch(e){onFail(e,"openOnline()")}}
-async function onQueue(kind){try{onClean();ON.qk=kind;onDlg(`<b>${ot("conn")}</b>`);await ensureAuth();ON.queued=true;const t0=Date.now();
+async function onQueue(kind){if(["ranked","blitz","casual"].includes(kind)){save("lastk",kind);try{menuRt()}catch(e){}}try{onClean();ON.qk=kind;onDlg(`<b>${ot("conn")}</b>`);await ensureAuth();ON.queued=true;const t0=Date.now();
 onDlg(`<b>${ot("find")}</b><p id="qs" style="font:700 30px Cinzel,serif;color:var(--g)">0s</p><div id="qf"></div><button onclick="onClean();dl.close()">${ot("cancel")}</button>`);
 const tick=async()=>{if(!ON.queued)return;const s=Math.floor((Date.now()-t0)/1000);const el=$("qs");if(el)el.textContent=s+"s";if(s>=60&&$("qf")&&!$("qf").innerHTML)$("qf").innerHTML=`<p>${ot("few")}</p><button onclick="onTrain()">${ot("train")}</button>`;
 try{const id=await rpc("find_match",{p_kind:kind});if(id&&ON.queued){ON.queued=false;clearInterval(ON.wait);onStart(id)}}catch(e){if(ON.queued)onFail(e,"onQueue('"+kind+"')")}};
@@ -401,7 +401,7 @@ function openTreino(){onDlg(`<b>${ot("hTrn")}</b><button onclick="dl.close();_b1
 function menuRt(){const t=ON.tr==null?0:ON.tr,i=lgIdx(t),nm=ON.nick||ot("gst"),g=ON.g!=null?ON.g:prof.games,w=ON.w!=null?ON.w:prof.wins,x=xpInfo(g,w);
 $("av").textContent=(nm[0]||"?").toUpperCase();$("hn2").textContent=nm;$("lv").textContent=ot("lvl",x.L);$("xpb").style.width=Math.round(100*x.rem/x.need)+"%";$("xpt").textContent=ot("exp",nf(x.rem),nf(x.need));
 $("rkn").textContent=lgN(i).replace(/ 1$/," I").replace(/ 2$/," II").replace(/ 3$/," III");$("rkl").textContent=`🏆 ${t}`;
-$("b2t").textContent=ot("hOn");$("b3t").textContent=ot("mRk");$("b3s").textContent=ot("hRk");$("b4t").textContent=ot("mBz");$("b4s").textContent=ot("hBz");$("b5t").textContent=ot("hDl");$("b1t").textContent=ot("hTrn");$("bct").textContent=ot("hCs");$("bcs").textContent=ot("hCsS");
+$("b2t").textContent=ot("hOn");{const lk=ld("lastk","ranked");$("b3t").textContent=ot(lk=="blitz"?"mBz":lk=="casual"?"hCs":"mRk");$("b3s").textContent=ot(lk=="blitz"?"hBz":lk=="casual"?"hCsS":"hRk");const u=$("b3").querySelector("use");if(u)u.setAttribute("href",lk=="blitz"?"#i-bo":lk=="casual"?"#i-pe":"#i-tr")}$("b4t").textContent=ot("mBz");$("b4s").textContent=ot("hBz");$("b5t").textContent=ot("hDl");$("b1t").textContent=ot("hTrn");$("bct").textContent=ot("hCs");$("bcs").textContent=ot("hCsS");
 $("yrl").textContent=ot("yRk");const hasP=ON.pos!=null&&g>0;$("yrp").textContent=hasP?"#"+nf(ON.pos):"#—";const d=ON.dpos;$("yrd").textContent=hasP?(d>0?ot("posUp",d):d<0?ot("posDn",-d):ON.tot?ot("posOf",nf(ON.tot)):""):ot("posNew");$("yrd").className=d<0?"dn":"";
 const na=Object.keys(prof.ach||{}).filter(k=>prof.ach[k]).length;$("acn").textContent=ot("ach2");$("acs").textContent=ot("ach3",na,6);$("acb").style.width=Math.round(100*na/6)+"%";
 ["nHome","nPlay","nRk","nHi","nFr","nSet"].forEach((k,n)=>$("tb"+n).textContent=ot(k));
@@ -474,7 +474,7 @@ const _menu=menu;menu=function(){if(ON.mid)ON.lastMid=ON.mid;onClean();_menu();m
 function resumeBtn(){const m=ld("bqm",null);$("b6").style.display=m?"block":"none";$("b6t").textContent=ot("resume")}
 const _op=openProf;openProf=function(){_op();dl.innerHTML=dl.innerHTML.replace('<button onclick="dl.close()">','<button onclick="openAcct()">'+ot("acct")+'</button><button onclick="dl.close()">')};
 $("bk").onclick=()=>{if(RP)return leave();if(mode==5&&S.over==null){onDlg(`<b>${ot("leave")}</b><button onclick="dl.close();leaveNow()">${ot("leaveY")}</button><button onclick="dl.close()">${ot("stay")}</button>`);return}menu()};
-$("b2").onclick=openOnlineMenu;$("b3").onclick=()=>onQueue("ranked");$("b4").onclick=()=>onQueue("blitz");$("b6").onclick=()=>{const m=ld("bqm",null);if(m)onStart(m,true)};
+$("b2").onclick=openOnlineMenu;$("b3").onclick=()=>onQueue(ld("lastk","ranked"));$("b4").onclick=()=>onQueue("blitz");$("b6").onclick=()=>{const m=ld("bqm",null);if(m)onStart(m,true)};
 $("mp").onclick=openProf;$("hd").onclick=openAcct;$("rkc").onclick=onBoard;$("yr").onclick=onBoard;$("nr").onclick=onBoard;$("nj").onclick=openOnlineMenu;$("na").onclick=openOnline;$("bc").onclick=()=>onQueue("casual");window._b1=$("b1").onclick;$("b1").onclick=openTreino;menuRt();onElo().then(onPos);resumeBtn();gReturn();splashRun();
 </script>
 </body></html>
