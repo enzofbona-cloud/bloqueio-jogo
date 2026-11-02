@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bloqueio</title>
+<meta name="theme-color" content="#17100c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Bloqueio"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="icon-180.png"><link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120d0b;--pn:#17110e;--cell:#2a2320;--tx:#eadfc4;--mu:#a9987a;--g:#d4af6a;--r:#b8404f;--gold:#b8924a;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%;margin:0}
+body{background:radial-gradient(110% 70% at 50% 0%,#3a271c 0%,#1a120e 50%,#0b0807 100%) fixed;color:var(--tx);font:600 18px/1.3 "Cormorant Garamond",Georgia,serif;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+.sc{max-width:480px;height:100%;margin:0 auto;padding:6px 14px 10px;display:none;flex-direction:column}.sc.on{display:flex}
+button{font:600 15px/1.2 "Cinzel",Georgia,serif;letter-spacing:1.5px;color:var(--tx);border:1px solid var(--gold);background:linear-gradient(#35271f,#211711);border-radius:6px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,235,190,.12),0 2px 6px rgba(0,0,0,.5)}
+button:active:not(:disabled){background:linear-gradient(#2a1e17,#1a120d)}
+#menu{overflow-y:auto}.mi{margin:auto 0;display:flex;flex-direction:column;gap:11px;text-align:center;padding:8px 0}
+.orn{color:var(--gold);letter-spacing:10px;font-size:14px;margin:0 0 4px}
+#menu h1{font:700 40px/1 "Cinzel",Georgia,serif;letter-spacing:7px;margin:0 0 4px;padding-left:7px;background:linear-gradient(#f3dca0,#b8924a 60%,#8a6a30);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.tag{color:var(--mu);font-style:italic;font-size:17px;margin:0 0 16px}
+#menu .mi>button{padding:15px 10px;font-size:15px;text-transform:uppercase}
+#menu button.pri{background:linear-gradient(#7d2431,#521620);border-color:#d4af6a}
+#menu #b3{background:linear-gradient(#2f5240,#1b3226);border-color:#d4af6a}
+#menu button:disabled{background:linear-gradient(#2a241f,#1d1814);border-color:#4a3d2c;color:#7d705a}
+#menu small{display:block;font:600 14px "Cormorant Garamond",Georgia,serif;letter-spacing:.5px;text-transform:none;color:#cbbd9b;margin-top:3px;font-style:italic}
+#menu .row{display:flex;gap:8px}#menu .row button{flex:1;padding:11px 2px;font-size:10.5px;text-transform:uppercase;letter-spacing:1px}.glow{box-shadow:0 0 0 1px var(--g),0 0 14px rgba(212,175,106,.5)!important}
+.top{display:flex;align-items:center;height:46px}.top b{flex:1;text-align:center;font:700 20px "Cinzel",Georgia,serif;letter-spacing:5px;margin-right:36px;color:var(--g)}
+.top button{background:none;border:0;box-shadow:none;font-size:34px;width:36px;padding:0;color:var(--g);line-height:1}
+#game{overflow-y:auto}#game>*{flex-shrink:0}
+.pl{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 0}.who{display:flex;align-items:center;gap:10px;font:600 16px "Cinzel",Georgia,serif;letter-spacing:1px}.who i{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#6a2a33,#2a0f14);border:1.5px solid var(--gold);display:grid;place-items:center;font:700 17px "Cinzel",serif;font-style:normal}.who span{color:var(--mu);font:600 16px "Cormorant Garamond",serif;letter-spacing:0}
+.sg{display:flex;gap:4px}.sg i{width:11px;height:24px;border-radius:2px;background:#241b16;border:1px solid #4a3a2c}.sg.o i.f{background:linear-gradient(#d9667a,#8e2434);border-color:#5a1420}.sg.m i.f{background:linear-gradient(#f0d896,#b8924a);border-color:#7a5d28}
+#bw{width:100%;max-width:min(100%,50vh);margin:0 auto;aspect-ratio:1;border:3px solid var(--gold);border-radius:6px;overflow:hidden;background:var(--pn);box-shadow:0 0 0 2px #0a0706,0 10px 24px rgba(0,0,0,.7)}#sv{width:100%;height:100%;display:block;touch-action:none}
+.nw{animation:pop .3s ease-out;transform-box:fill-box;transform-origin:center}@keyframes pop{from{opacity:0;transform:scale(1.6)}to{opacity:1;transform:scale(1)}}
+#tut{display:none;border-left:3px solid var(--gold);background:rgba(0,0,0,.4);padding:8px 12px;margin:10px 0 0;font-size:17px;border-radius:4px;line-height:1.25}#tut button{margin-top:8px;padding:8px 18px;font-size:12px;text-transform:uppercase}
+#play{display:flex;flex-direction:column;flex:1;min-height:0}
+#ck{display:none;justify-content:space-between;font:600 14px "Cinzel",serif;letter-spacing:1px;color:var(--mu);margin-top:10px}#ck .lo{color:#ff8a80}
+.inf{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}.inf div:first-child{font-size:18px;color:var(--tx)}.inf span{color:var(--mu);text-align:right;font-size:15px;font-style:italic}
+.wb{display:flex;justify-content:center;gap:16px;margin:12px 0}.wb button{width:104px;height:60px;display:grid;place-items:center;touch-action:none}.wb button.d{opacity:.35}
+.bar{height:10px;width:58px;border-radius:2px;background:linear-gradient(#f0d896,#b8924a);border:1px solid #6b4f1f}.bar.v{height:46px;width:10px}
+.nv{display:flex;justify-content:space-around;gap:6px;margin-top:auto;padding-top:8px}.nv button{flex:1;font-size:10px;padding:7px 2px 5px;position:relative;line-height:1.15;letter-spacing:1px;text-transform:uppercase;color:var(--mu)}.nv button b{display:block;font-size:20px;font-weight:400;color:var(--g);margin-bottom:2px}.nv sup{position:absolute;top:-6px;right:2px;background:#d4af6a;color:#1a120e;border:1px solid #6b4f1f;border-radius:50%;width:20px;height:20px;font:700 11px "Cinzel",serif;display:grid;place-items:center;letter-spacing:0}.nv button:disabled{opacity:.4}
+#rp{display:none;flex-direction:column;gap:12px;margin-top:16px}.rpl #rp{display:flex}.rpl #play{display:none}.rpl #tut{display:none!important}
+#rp .rt{text-align:center;color:var(--g);font:600 17px "Cinzel",serif;letter-spacing:1px}#rp .row{display:flex;gap:8px}#rp .row button{flex:1;padding:14px;font-size:18px}#rx{padding:13px;font-size:13px;text-transform:uppercase}
+#hist .hi{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;margin:5px 0;padding:12px;text-align:left;font:600 14px "Cormorant Garamond",serif;letter-spacing:0;background:#1d1511;border-color:#4a3a2c}#hl{flex:1;overflow-y:auto}
+dialog{border:1px solid var(--gold);border-radius:10px;padding:22px 20px;background:linear-gradient(#2a1d16,#17100c);color:var(--tx);max-width:340px;width:88%;text-align:center;box-shadow:0 0 0 3px #0a0706,0 20px 50px #000;max-height:90vh;overflow-y:auto}dialog::backdrop{background:#000c}dialog>b{font:700 20px "Cinzel",serif;letter-spacing:2px;color:var(--g)}dialog button{display:block;width:100%;margin-top:10px;padding:13px;font-size:13px;text-transform:uppercase}dialog p{color:var(--mu);margin:8px 0 0}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.cg button{margin:0!important;padding:12px 6px!important;font:600 16px "Cormorant Garamond",serif;letter-spacing:0;text-transform:none}
+.bub{position:fixed;left:50%;transform:translateX(-50%);background:#eadfc4;color:#2a1a14;border:1px solid var(--gold);padding:6px 16px;border-radius:6px;font:700 18px "Cormorant Garamond",serif;z-index:5;display:none;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.6);max-width:90%;text-align:center}#bo{top:150px}#bm{bottom:200px}
+</style></head><body>
+<div class="sc on" id="menu"><div class="mi">
+<div class="orn">✦ ✦ ✦</div><h1>BLOQUEIO</h1><div class="tag" data-i="tag"></div>
+<button class="pri" id="b1"><span data-i="play"></span></button>
+<button id="b4"><span data-i="blitz"></span><small data-i="blitzs"></small></button>
+<button id="b5"><span data-i="daily"></span><small id="ds"></small></button>
+<button id="b3"><span data-i="ranked"></span><small id="rt"></small></button>
+<button id="b6" style="display:none"><span id="b6t"></span></button>
+<button id="b2"><span data-i="online"></span><small id="b2s"></small></button>
+<div class="row"><button id="mt"><span data-i="mt"></span></button><button id="mh"><span data-i="mh"></span></button><button id="mp"><span data-i="mp"></span></button><button id="mset"><span data-i="mset"></span></button></div>
+</div></div>
+<div class="sc" id="hist"><div class="top"><button id="hb">‹</button><b data-i="mh"></b></div><div id="hl"></div></div>
+<div class="sc" id="game">
+<div class="top"><button id="bk">‹</button><b>BLOQUEIO</b></div>
+<div class="pl"><div class="who"><i id="oi">C</i><div id="on"></div></div><div class="sg o" id="ow"></div></div>
+<div id="bw"><svg id="sv" viewBox="0 0 99 99"><defs><radialGradient id="gg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff3d4"/><stop offset="1" stop-color="#a8864a"/></radialGradient><radialGradient id="gr" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d9667a"/><stop offset="1" stop-color="#7a1424"/></radialGradient></defs></svg></div>
+<div id="tut"></div>
+<div id="play"><div id="ck"><span id="c0"></span><span id="c1"></span></div>
+<div class="inf"><div><div class="sg m" id="mw"></div><div id="mc" style="margin-top:6px;color:var(--mu);font-size:18px"></div></div><span id="ms"></span></div>
+<div class="wb"><button id="wh"><div class="bar"></div></button><button id="wv"><div class="bar v"></div></button></div>
+<div class="nv"><button id="op"><b>≡</b><span data-i="opts"></span></button><button id="gv"><b>⚑</b><span data-i="resign"></span></button><button id="hn"><b>✦</b><span data-i="hint"></span><sup id="hc">3</sup></button><button id="un"><b>↩</b><span data-i="undo"></span><sup id="uc">3</sup></button><button id="ch"><b>✉</b><span data-i="chat"></span></button></div></div>
+<div id="rp"><div class="rt" id="rpt"></div><div class="row"><button id="r0">⏮</button><button id="r1">◀</button><button id="r2">▶</button><button id="r3">⏭</button></div><button id="rx"><span data-i="exitrev"></span></button></div>
+</div>
+<div class="bub" id="bo"></div><div class="bub" id="bm"></div>
+<dialog id="dl"></dialog>
+<script>
+let onlineBlitz=false;const N=9,$=i=>document.getElementById(i),sv=$("sv"),dl=$("dl"),K=(r,c)=>r+","+c,inb=(r,c)=>r>=0&&c>=0&&r<N&&c<N,GR=pl=>pl?8:0;
+const ld=(k,d)=>{try{const x=JSON.parse(localStorage.getItem(k));return x==null?d:x}catch(e){return d}},save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let cfg=Object.assign({snd:1,vib:1,lang:"pt",cb:0},ld("cfg2",{})),prof=Object.assign({games:0,wins:0,walls:0,tut:0,ach:{},daily:{streak:0,last:"",stars:{}}},ld("prof2",{})),rate=Object.assign({elo:1000,w:0,l:0},ld("rk2",{})),hist=ld("hist2",[]);
+/* ---------- textos (PT / EN / ES) ---------- */
+const D={pt:{tag:"estratégia e bloqueio",play:"Jogar contra a máquina",blitz:"Partida relâmpago",blitzs:"90 s + 2 s por jogada",daily:"Desafio diário",ranked:"Partida ranqueada",online:"Partida online",soon:"em breve: precisa de servidor",mt:"Tutorial",mh:"Histórico",mp:"Perfil",mset:"Ajustes",rks:"{0} pontos · {1} · treino offline",dnew:"Novo hoje",msMy:"Arraste um bloco para o tabuleiro ou toque num ponto dourado",msAi:"Vez do computador…",left:"{0} restantes",opts:"Opções",resign:"Desistir",hint:"Dica",undo:"Desfazer",chat:"Chat",comp:"Computador",you:"Você",lv:["Fácil","Médio","Difícil","Mestre"],tier:["Bronze","Prata","Ouro","Platina","Diamante"],levels:"Escolha o nível",lvsub:"A máquina fica mais esperta a cada jogada.",cancel:"Cancelar",close:"Fechar",win:"🏆 Você venceu!",lose:"Você perdeu",res:"Você desistiu",tmo:"Tempo esgotado",again:"Jogar de novo",menu:"Menu",next:"Próximo nível: {0}",review:"Revisar partida",resq:"Desistir da partida?",resy:"Sim, desistir",cont:"Continuar jogando",restart:"Reiniciar partida",back:"Voltar ao menu",chatT:"Mensagem rápida",nomoves:"Sem jogadas: vez passada",set:"Ajustes",snd:"Som",vib:"Vibração",cb:"Modo daltônico (formas)",lang:"Idioma",on:"ligado",off:"desligado",prof:"Perfil",games:"Partidas",wins:"Vitórias",rk:"Ranqueado",streak:"Sequência diária",ach:"Conquistas",days:"{0} dia(s)",a0:"Primeira vitória",a1:"10 vitórias",a2:"Vencer o nível Mestre",a3:"Colocar 50 muros",a4:"3 dias seguidos no desafio",a5:"Concluir o tutorial",newA:"🏅 Conquista: {0}",nohist:"Nenhuma partida ainda.",rev:"Revisão",mv:"Jogada {0}/{1}",exitrev:"Sair da revisão",moves:"{0} jogadas",w:"Vitória",l:"Derrota",dtxt:"Posição do dia contra a máquina no nível Mestre, sem dicas nem desfazer. Vença com poucas jogadas: 3 estrelas em até {0} jogadas.",dcnt:"Jogadas: {0} · 3★ até {1}",ddone:"Desafio concluído!",dstreak:"Sequência: {0} dia(s)",ask:"Primeira vez por aqui? Faça o tutorial de 1 minuto.",yesT:"Fazer tutorial",skip:"Pular",tcont:"Continuar",tdone:"Tutorial concluído!",tbad:"Quase! Tente o que o texto pede.",
+t0:"Você é a peça marfim, embaixo. O objetivo é chegar à linha de cima (dourada). A cada turno você faz UMA coisa: andar uma casa ou colocar um muro. Toque num ponto dourado para andar.",t1:"Agora os muros. Segure um dos blocos de baixo e arraste até o tabuleiro para atrasar o adversário. Cada muro cobre duas casas.",t2:"Regra importante: um muro nunca pode fechar todo o caminho de um jogador. Se tentar, ele fica vermelho e não encaixa.",t3:"Se o adversário estiver na sua frente, você pula por cima dele. Toque no ponto dourado atrás dele.",t4:"E se houver um muro atrás dele? Então você anda na diagonal. Toque num ponto dourado ao lado dele.",t5:"Agora é com você! Chegue à linha de cima antes da máquina.",
+m0:"Bom jogo!",m1:"Boa sorte!",m2:"Obrigado!",m3:"Boa jogada!",m4:"Vamos de novo?",m5:"Calma aí 😅",r_de:"De nada!",r_ty:"Obrigado! 😄",r_go:"Bora! 😄"},
+en:{tag:"strategy and blockade",play:"Play vs computer",blitz:"Blitz match",blitzs:"90 s + 2 s per move",daily:"Daily challenge",ranked:"Ranked match",online:"Online match",soon:"coming soon: needs a server",mt:"Tutorial",mh:"History",mp:"Profile",mset:"Settings",rks:"{0} points · {1} · offline practice",dnew:"New today",msMy:"Drag a block onto the board or tap a gold dot",msAi:"Computer's turn…",left:"{0} left",opts:"Options",resign:"Resign",hint:"Hint",undo:"Undo",chat:"Chat",comp:"Computer",you:"You",lv:["Easy","Medium","Hard","Master"],tier:["Bronze","Silver","Gold","Platinum","Diamond"],levels:"Choose the level",lvsub:"The computer gets smarter with every move.",cancel:"Cancel",close:"Close",win:"🏆 You won!",lose:"You lost",res:"You resigned",tmo:"Time's up",again:"Play again",menu:"Menu",next:"Next level: {0}",review:"Review game",resq:"Resign the game?",resy:"Yes, resign",cont:"Keep playing",restart:"Restart game",back:"Back to menu",chatT:"Quick message",nomoves:"No moves: turn skipped",set:"Settings",snd:"Sound",vib:"Vibration",cb:"Colorblind mode (shapes)",lang:"Language",on:"on",off:"off",prof:"Profile",games:"Games",wins:"Wins",rk:"Ranked",streak:"Daily streak",ach:"Achievements",days:"{0} day(s)",a0:"First win",a1:"10 wins",a2:"Beat Master level",a3:"Place 50 walls",a4:"3-day challenge streak",a5:"Finish the tutorial",newA:"🏅 Achievement: {0}",nohist:"No games yet.",rev:"Review",mv:"Move {0}/{1}",exitrev:"Leave review",moves:"{0} moves",w:"Win",l:"Loss",dtxt:"Today's position against the machine at Master level, no hints or undo. Win in few moves: 3 stars within {0} moves.",dcnt:"Moves: {0} · 3★ within {1}",ddone:"Challenge complete!",dstreak:"Streak: {0} day(s)",ask:"First time here? Try the 1-minute tutorial.",yesT:"Start tutorial",skip:"Skip",tcont:"Continue",tdone:"Tutorial complete!",tbad:"Almost! Try what the text asks.",
+t0:"You are the ivory piece, at the bottom. The goal is to reach the top row (gold). Each turn you do ONE thing: step one square or place a wall. Tap a gold dot to move.",t1:"Now walls. Hold one of the blocks below and drag it onto the board to slow your opponent. Each wall covers two squares.",t2:"Important rule: a wall can never close off a player's whole path. If you try, it turns red and won't fit.",t3:"If the opponent is right in front of you, you jump over them. Tap the gold dot behind them.",t4:"What if there's a wall behind them? Then you move diagonally. Tap a gold dot beside them.",t5:"Your turn to play! Reach the top row before the machine does.",
+m0:"Good game!",m1:"Good luck!",m2:"Thanks!",m3:"Nice move!",m4:"Play again?",m5:"Easy there 😅",r_de:"You're welcome!",r_ty:"Thanks! 😄",r_go:"Let's go! 😄"},
+es:{tag:"estrategia y bloqueo",play:"Jugar contra la máquina",blitz:"Partida relámpago",blitzs:"90 s + 2 s por jugada",daily:"Desafío diario",ranked:"Partida clasificatoria",online:"Partida online",soon:"próximamente: requiere servidor",mt:"Tutorial",mh:"Historial",mp:"Perfil",mset:"Ajustes",rks:"{0} puntos · {1} · práctica offline",dnew:"Nuevo hoy",msMy:"Arrastra un bloque al tablero o toca un punto dorado",msAi:"Turno de la máquina…",left:"{0} restantes",opts:"Opciones",resign:"Rendirse",hint:"Pista",undo:"Deshacer",chat:"Chat",comp:"Máquina",you:"Tú",lv:["Fácil","Medio","Difícil","Maestro"],tier:["Bronce","Plata","Oro","Platino","Diamante"],levels:"Elige el nivel",lvsub:"La máquina se vuelve más lista con cada jugada.",cancel:"Cancelar",close:"Cerrar",win:"🏆 ¡Ganaste!",lose:"Perdiste",res:"Te rendiste",tmo:"Se acabó el tiempo",again:"Jugar otra vez",menu:"Menú",next:"Siguiente nivel: {0}",review:"Revisar partida",resq:"¿Rendirse en la partida?",resy:"Sí, rendirme",cont:"Seguir jugando",restart:"Reiniciar partida",back:"Volver al menú",chatT:"Mensaje rápido",nomoves:"Sin jugadas: turno pasado",set:"Ajustes",snd:"Sonido",vib:"Vibración",cb:"Modo daltónico (formas)",lang:"Idioma",on:"activado",off:"desactivado",prof:"Perfil",games:"Partidas",wins:"Victorias",rk:"Clasificatoria",streak:"Racha diaria",ach:"Logros",days:"{0} día(s)",a0:"Primera victoria",a1:"10 victorias",a2:"Vencer el nivel Maestro",a3:"Colocar 50 muros",a4:"3 días seguidos en el desafío",a5:"Completar el tutorial",newA:"🏅 Logro: {0}",nohist:"Aún no hay partidas.",rev:"Revisión",mv:"Jugada {0}/{1}",exitrev:"Salir de la revisión",moves:"{0} jugadas",w:"Victoria",l:"Derrota",dtxt:"La posición del día contra la máquina en nivel Maestro, sin pistas ni deshacer. Gana en pocas jugadas: 3 estrellas en {0} jugadas o menos.",dcnt:"Jugadas: {0} · 3★ hasta {1}",ddone:"¡Desafío completado!",dstreak:"Racha: {0} día(s)",ask:"¿Primera vez? Haz el tutorial de 1 minuto.",yesT:"Hacer tutorial",skip:"Saltar",tcont:"Continuar",tdone:"¡Tutorial completado!",tbad:"¡Casi! Prueba lo que pide el texto.",
+t0:"Eres la pieza marfil, abajo. El objetivo es llegar a la fila de arriba (dorada). En cada turno haces UNA cosa: avanzar una casilla o colocar un muro. Toca un punto dorado para moverte.",t1:"Ahora los muros. Mantén pulsado uno de los bloques de abajo y arrástralo al tablero para retrasar al rival. Cada muro cubre dos casillas.",t2:"Regla importante: un muro nunca puede cerrar todo el camino de un jugador. Si lo intentas, se pone rojo y no encaja.",t3:"Si el rival está justo delante, saltas por encima. Toca el punto dorado detrás de él.",t4:"¿Y si hay un muro detrás de él? Entonces te mueves en diagonal. Toca un punto dorado a su lado.",t5:"¡Ahora te toca! Llega a la fila de arriba antes que la máquina.",
+m0:"¡Buen juego!",m1:"¡Buena suerte!",m2:"¡Gracias!",m3:"¡Buena jugada!",m4:"¿Otra vez?",m5:"Calma 😅",r_de:"¡De nada!",r_ty:"¡Gracias! 😄",r_go:"¡Vamos! 😄"}};
+const LN={pt:"Português",en:"English",es:"Español"};
+const T=(k,...a)=>{let s=(D[cfg.lang]&&D[cfg.lang][k])||D.pt[k]||k;a.forEach((v,i)=>s=s.replace("{"+i+"}",v));return s},TA=k=>(D[cfg.lang]&&D[cfg.lang][k])||D.pt[k];
+/* ---------- estado ---------- */
+const fresh=()=>({p:[[8,4],[0,4]],w:[10,10],H:new Map(),V:new Map(),t:0,over:null});
+let S=fresh(),mode=1,lvl=1,turns=0,hints=3,undos=3,stack=[],drag=null,hint=null,opp=1000,busy=false,aiHist=[],rec=[],lastW=null,ANI=false,pv=[[8,4],[0,4]],clk=[90,90],tstep=0,RP=null,dailyBest=0,dmoves=0,askedTut=false,dStars=1,newAch=[],bt={};
+const LV=[{d:1,n:12,e:700},{d:2,n:1.3,e:1000},{d:3,n:.35,e:1300},{d:3,n:0,e:1600}];
+const rankLv=()=>opp<900?0:opp<1100?1:opp<1400?2:3,curLv=()=>mode==2?rankLv():mode==0?0:mode==3?3:lvl;
+const tier=e=>TA("tier")[e<900?0:e<1100?1:e<1300?2:e<1500?3:4];
+/* ---------- som e vibração ---------- */
+let AC;function tone(f,d,ty,v,at){const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;const t=AC.currentTime+(at||0);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}
+function snd(k){if(!cfg.snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=="suspended")AC.resume();({move:()=>tone(330,.09,"triangle",.18),wall:()=>{tone(150,.12,"square",.1);tone(110,.14,"triangle",.14,.04)},click:()=>tone(520,.05,"sine",.08),ok:()=>{tone(520,.1,"sine",.14);tone(780,.14,"sine",.14,.09)},win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.25,"triangle",.16,i*.12)),lose:()=>[330,262,196].forEach((f,i)=>tone(f,.3,"sine",.15,i*.16))})[k]()}catch(e){}}
+function vibe(p){if(cfg.vib&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+/* ---------- regras ---------- */
+function clone(g){return{p:g.p.map(x=>x.slice()),w:g.w.slice(),H:new Map(g.H),V:new Map(g.V),t:g.t,over:g.over}}
+function blk(g,r,c,r2,c2){if(r2!=r){const a=Math.min(r,r2);return g.H.has(K(a,c))||g.H.has(K(a,c-1))}const b=Math.min(c,c2);return g.V.has(K(r,b))||g.V.has(K(r-1,b))}
+function moves(g,pl){const [r,c]=g.p[pl],o=g.p[1-pl],out=[];for(const [dr,dc] of[[-1,0],[1,0],[0,-1],[0,1]]){const a=r+dr,b=c+dc;if(!inb(a,b)||blk(g,r,c,a,b))continue;if(a==o[0]&&b==o[1]){const a2=a+dr,b2=b+dc;if(inb(a2,b2)&&!blk(g,a,b,a2,b2))out.push([a2,b2]);else for(const [pr,pc] of dr?[[0,1],[0,-1]]:[[1,0],[-1,0]]){const a3=a+pr,b3=b+pc;if(inb(a3,b3)&&!blk(g,a,b,a3,b3))out.push([a3,b3])}}else out.push([a,b])}return out}
+function dist(g,pl){const [r0,c0]=g.p[pl],d=new Int16Array(81).fill(-1),q=[[r0,c0]];d[r0*N+c0]=0;for(let k=0;k<q.length;k++){const [r,c]=q[k];if(r==GR(pl))return d[r*N+c];for(const [dr,dc] of[[1,0],[-1,0],[0,1],[0,-1]]){const a=r+dr,b=c+dc;if(!inb(a,b)||d[a*N+b]>=0||blk(g,r,c,a,b))continue;d[a*N+b]=d[r*N+c]+1;q.push([a,b])}}return -1}
+function wallOK(g,t,r,c){if(r<0||c<0||r>7||c>7)return false;const k=K(r,c);if(g.H.has(k)||g.V.has(k))return false;if(t=="H"?(g.H.has(K(r,c-1))||g.H.has(K(r,c+1))):(g.V.has(K(r-1,c))||g.V.has(K(r+1,c))))return false;
+const M=t=="H"?g.H:g.V;M.set(k,9);const ok=dist(g,0)>=0&&dist(g,1)>=0;M.delete(k);return ok}
+function acts(g,pl){const a=moves(g,pl).map(m=>({m}));if(g.w[pl]>0)for(const t of["H","V"])for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(wallOK(g,t,r,c))a.push({w:[t,r,c]});return a}
+function put(g,pl,a){if(a.m)g.p[pl]=a.m.slice();else{(a.w[0]=="H"?g.H:g.V).set(K(a.w[1],a.w[2]),pl);g.w[pl]--}}
+/* ---------- inteligência da máquina ---------- */
+function score(g,pl,a){const old=g.p[pl].slice();let M;if(a.m)g.p[pl]=a.m;else{M=a.w[0]=="H"?g.H:g.V;M.set(K(a.w[1],a.w[2]),pl)}
+const s=a.m&&a.m[0]==GR(pl)?1e3:dist(g,1-pl)-dist(g,pl)+(a.m?.2:0);g.p[pl]=old;if(M)M.delete(K(a.w[1],a.w[2]));return s}
+function best(g,pl,noise){let b=null,bs=-1e9;for(const a of acts(g,pl)){const s=score(g,pl,a)+(Math.random()-.5)*noise*2;if(s>bs){bs=s;b=a}}return b}
+function pathCells(g,pl){const [r0,c0]=g.p[pl],par=new Int16Array(81).fill(-2),q=[[r0,c0]];par[r0*N+c0]=-1;let end=-1;
+for(let k=0;k<q.length;k++){const [r,c]=q[k];if(r==GR(pl)){end=r*N+c;break}for(const [dr,dc] of[[1,0],[-1,0],[0,1],[0,-1]]){const a=r+dr,b=c+dc;if(!inb(a,b)||par[a*N+b]!=-2||blk(g,r,c,a,b))continue;par[a*N+b]=r*N+c;q.push([a,b])}}
+const out=[];while(end>=0){out.push([(end/N)|0,end%N]);end=par[end]}return out}
+function cands(g,pl){const a=moves(g,pl).map(m=>({m}));if(g.w[pl]>0){const seen=new Set();for(const [r,c] of pathCells(g,1-pl).slice(-9))for(let rr=r-1;rr<=r;rr++)for(let cc=c-1;cc<=c;cc++)for(const t of["H","V"]){const k=t+rr+","+cc;if(seen.has(k))continue;seen.add(k);if(wallOK(g,t,rr,cc))a.push({w:[t,rr,cc]})}}return a}
+function ev(g){if(g.p[1][0]==8)return 1e4;if(g.p[0][0]==0)return -1e4;return (dist(g,0)-dist(g,1))*10+(g.w[1]-g.w[0])*.4}
+function srch(g,pl,d,al,be){const cs=cands(g,pl);if(!cs.length)return ev(g);
+const sc=cs.map(a=>{const h=clone(g);put(h,pl,a);return{v:ev(h),h}});let b=pl==1?-1e9:1e9;
+if(d==1){for(const x of sc)b=pl==1?Math.max(b,x.v):Math.min(b,x.v);return b}
+sc.sort((x,y)=>pl==1?y.v-x.v:x.v-y.v);
+for(const x of sc.slice(0,8)){const v=Math.abs(x.v)>=1e4?x.v:srch(x.h,1-pl,d-1,al,be);if(pl==1){b=Math.max(b,v);al=Math.max(al,b)}else{b=Math.min(b,v);be=Math.min(be,b)}if(be<=al)break}return b}
+function aiPick(){const L=LV[curLv()],noise=L.n*Math.max(.25,1.5-.07*turns),cs=cands(S,1);if(!cs.length)return null;const old=dist(S,1);
+const sc=cs.map(a=>{const h=clone(S);put(h,1,a);return{a,h,v:ev(h)}}).sort((x,y)=>y.v-x.v);
+const top=L.d<2?sc:sc.slice(0,L.d>=3?12:16);let b=null,bs=-1e9;
+for(const x of top){let v=x.v>=1e4?1e4:L.d<2?x.v:srch(x.h,0,L.d-1,-1e9,1e9);
+if(x.a.m){const k=x.a.m[0]+","+x.a.m[1];v-=4*aiHist.filter(z=>z==k).length;v+=.3*(old-dist(x.h,1))}else v-=.15;
+v+=(Math.random()-.5)*noise*2;if(v>bs){bs=v;b=x.a}}return b}
+/* ---------- desafio diário ---------- */
+const pad=n=>String(n).padStart(2,"0"),dkey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),todayKey=()=>dkey(new Date()),yestKey=()=>dkey(new Date(Date.now()-864e5));
+function rngs(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function dailyGame(key){let h=0;for(const ch of key)h=(h*31+ch.charCodeAt(0))|0;let out=null;
+for(let at=0;at<60&&!out;at++){const rnd=rngs(h+at*7919),g=fresh(),r0=5+Math.floor(rnd()*3),c0=Math.floor(rnd()*9);g.p=[[r0,c0],[8-r0,8-c0]];
+const want=3+Math.floor(rnd()*3);let placed=0,tries=0;
+while(placed<want&&tries<400){tries++;const t=rnd()<.5?"H":"V",r=Math.floor(rnd()*8),c=Math.floor(rnd()*8),M=t=="H"?g.H:g.V;if(!wallOK(g,t,r,c))continue;M.set(K(r,c),0);if(!wallOK(g,t,7-r,7-c)){M.delete(K(r,c));continue}M.set(K(7-r,7-c),1);placed++}
+if(placed>=3){g.w=[10-placed,10-placed];out={g,best:dist(g,0)+10}}}
+return out||{g:fresh(),best:11}}
+/* ---------- tutorial ---------- */
+const TUT=[{k:"t0",su(){S.p=[[8,4],[0,4]];S.H.clear();S.V.clear();S.w=[10,10]},ok:a=>!!a.m},
+{k:"t1",wall:1,su(){S.p=[[7,4],[2,4]];S.H.clear();S.V.clear();S.w=[10,10]},ok:a=>!!a.w},
+{k:"t2",info:1,su(){}},
+{k:"t3",su(){S.p=[[5,4],[4,4]];S.H.clear();S.V.clear();S.w=[10,10]},ok:a=>a.m&&a.m[0]==3&&a.m[1]==4},
+{k:"t4",su(){S.p=[[5,4],[4,4]];S.H.clear();S.V.clear();S.H.set("3,3",1);S.w=[10,10]},ok:a=>a.m&&a.m[0]==4&&a.m[1]!=4}];
+function tutStep(){S.t=0;S.over=null;busy=false;if(tstep>=TUT.length){S=fresh();stack=[];rec=[];aiHist=["0,4"];turns=0}else{const st=TUT[tstep];st.su();if(st.info)busy=true}ban();render()}
+function tutAct(a){const st=TUT[tstep];busy=true;doAct(0,a,()=>{if(st.ok(a)){snd("ok");tstep++;setTimeout(tutStep,500)}else{bub("m",T("tbad"));setTimeout(tutStep,800)}})}
+function ban(){const e=$("tut");let h="";if(mode==0){const st=TUT[tstep];h=T(st?st.k:"t5");if(st&&st.info)h+=`<br><button id="tc">${T("tcont")}</button>`}else if(mode==3)h=T("dtxt",dailyBest)+`<br><b>${T("dcnt",dmoves,dailyBest)}</b>`;e.style.display=h?"block":"none";e.innerHTML=h;if($("tc"))$("tc").onclick=()=>{tstep++;tutStep()}}
+/* ---------- conquistas ---------- */
+function unlock(i){if(!prof.ach["a"+i]){prof.ach["a"+i]=1;newAch.push(i);save("prof2",prof)}}
+function achHtml(){const h=newAch.map(i=>`<p style="color:var(--g)">${T("newA",T("a"+i))}</p>`).join("");newAch=[];return h}
+/* ---------- fluxo da partida ---------- */
+const show=id=>{["menu","game","hist"].forEach(s=>$(s).classList.toggle("on",s==id))};
+function setLabel(){let lab;if(mode==0)lab=T("mt");else if(mode==3)lab=T("daily")+" · "+TA("lv")[3];else if(mode==9)lab=T("rev");else if(mode==5)lab=ON.opp;else lab=`${T("comp")} · ${TA("lv")[curLv()]} <span>${opp}</span>`;$("on").innerHTML=lab}
+function menu(){RP=null;$("game").classList.remove("rpl");$("rt").textContent=T("rks",rate.elo,tier(rate.elo));const k=todayKey(),st=prof.daily.stars[k];$("ds").textContent=st?"✓ "+"★".repeat(st):T("dnew");$("mt").classList.toggle("glow",!prof.tut);show("menu")}
+function newGame(m){if(m==5)return onAgain();mode=m;RP=null;$("game").classList.remove("rpl");S=fresh();stack=[];rec=[];hints=3;undos=3;drag=null;hint=null;busy=false;turns=0;lastW=null;dmoves=0;tstep=0;clk=[90,90];opp=m==2?rate.elo:m==3?LV[3].e:LV[lvl].e;aiHist=["0,4"];newAch=[];
+if(m==3){const d=dailyGame(todayKey());S=d.g;dailyBest=d.best;aiHist=[K(S.p[1][0],S.p[1][1])]}
+setLabel();show("game");ban();render();if(m==0)tutStep();if(m==1||m==2||m==4)setTimeout(()=>bub("o",T("m1")),900)}
+function slide(pl,from,to,done){ANI=true;pv=[S.p[0].slice(),S.p[1].slice()];pv[pl]=from.slice();const t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/170),e=k*(2-k);pv[pl]=[from[0]+(to[0]-from[0])*e,from[1]+(to[1]-from[1])*e];render();if(k<1)requestAnimationFrame(f);else{ANI=false;done()}})(t0)}
+function doAct(pl,a,done){const old=S.p[pl].slice();put(S,pl,a);if(a.m){snd("move");vibe(15);slide(pl,old,a.m,done)}else{snd("wall");vibe(25);const key=a.w[0]+K(a.w[1],a.w[2]);lastW=key;setTimeout(()=>{if(lastW==key)lastW=null},400);render();done()}}
+const enc=(pl,a)=>a.m?[pl,"m",a.m[0],a.m[1]]:[pl,a.w[0],a.w[1],a.w[2]],dec=e=>e[1]=="m"?{m:[e[2],e[3]]}:{w:[e[1],e[2],e[3]]};
+function human(a){if(mode==5)return onHuman(a);if(mode==0&&tstep<TUT.length)return tutAct(a);
+turns++;stack.push({s:clone(S),rl:rec.length});hint=null;rec.push(enc(0,a));busy=true;
+doAct(0,a,()=>{if(a.w){prof.walls++;if(prof.walls>=50)unlock(3);save("prof2",prof)}if(S.over!=null)return;if(mode==3){dmoves++;ban()}if(finish())return;if(mode==4)clk[0]+=2;S.t=1;render();setTimeout(aiMove,500)})}
+function aiMove(){if(S.over!=null)return;const b=aiPick();const nxt=()=>{busy=false;if(S.over!=null)return;if(finish())return;S.t=0;if(mode==4)clk[1]+=2;
+if(!moves(S,0).length&&S.w[0]==0){bub("m",T("nomoves"));S.t=1;busy=true;render();setTimeout(aiMove,900);return}render()};
+if(b){if(b.m)aiHist.push(K(b.m[0],b.m[1]));rec.push(enc(1,b));doAct(1,b,nxt)}else nxt()}
+function finish(){if(S.over!=null)return true;const w=S.t;if(S.p[w][0]==GR(w)){endGame(w);return true}return false}
+function endGame(w,why){if(S.over!=null)return;S.over=w;busy=true;const me=w==0;
+if(mode==2){const ex=1/(1+Math.pow(10,(opp-rate.elo)/400));rate.elo=Math.max(0,Math.round(rate.elo+32*((me?1:0)-ex)));me?rate.w++:rate.l++;save("rk2",rate)}
+if(mode==1||mode==2||mode==4){prof.games++;if(me){prof.wins++;unlock(0);if(prof.wins>=10)unlock(1);if(curLv()==3)unlock(2)}}
+if(mode==0&&me){prof.tut=1;unlock(5)}if(mode==3&&me){const d=prof.daily,k=todayKey(),n=dmoves;dStars=n<=dailyBest?3:n<=dailyBest+8?2:1;d.stars[k]=Math.max(d.stars[k]||0,dStars);if(d.last!=k){d.streak=d.last==yestKey()?d.streak+1:1;d.last=k}if(d.streak>=3)unlock(4)}save("prof2",prof);
+if(mode==1||mode==2||mode==3||mode==4){hist.unshift({d:Date.now(),m:mode,l:curLv(),w,y:why||"",mv:rec.slice()});hist=hist.slice(0,20);save("hist2",hist)}
+render();snd(me?"win":"lose");vibe(me?[40,60,40]:80);setTimeout(()=>msgEnd(w,why),500)}
+function msgEnd(w,why){const me=w==0;let t=why=="res"?T("res"):why=="tmo"?T("tmo"):me?T("win"):T("lose");if(mode==0&&me)t=T("tdone");
+let h=`<b>${t}</b>`;if(mode==3&&me)h=`<b>${T("ddone")}</b><p style="font-size:30px;color:var(--g)">${"★".repeat(dStars)+"☆".repeat(3-dStars)}</p><p>${T("dcnt",dmoves,dailyBest)}</p><p>${T("dstreak",prof.daily.streak)}</p>`;if(mode==2)h+=`<p>${rate.elo} · ${tier(rate.elo)}</p>`;if(mode==5){h+=`<p id="eld"></p>`;setTimeout(onEloInfo,30)}h+=achHtml();
+if(mode==1&&me&&lvl<3)h+=`<button onclick="dl.close();lvl++;newGame(1)">${T("next",TA("lv")[lvl+1])}</button>`;
+if((mode==1||mode==2||mode==3||mode==4)&&hist.length)h+=`<button onclick="dl.close();openReplay(0)">${T("review")}</button>`;
+h+=`<button onclick="dl.close();newGame(${mode})">${T("again")}</button><button onclick="dl.close();menu()">${T("menu")}</button>`;dl.innerHTML=h;dl.showModal()}
+function giveUp(){if(mode==0)return menu();if(mode==5)return onResign();endGame(1,"res")}
+/* ---------- relógio ---------- */
+const fm=x=>{x=Math.max(0,Math.ceil(x));return Math.floor(x/60)+":"+pad(x%60)};
+const isBl=()=>mode==4||(mode==5&&onlineBlitz);
+function clkUI(){$("ck").style.display=isBl()?"flex":"none";if(!isBl())return;$("c0").innerHTML=`<span class="${clk[0]<10?"lo":""}">⏱ ${T("you")} ${fm(clk[0])}</span>`;$("c1").innerHTML=`<span class="${clk[1]<10?"lo":""}">${T("comp")} ${fm(clk[1])}</span>`}
+setInterval(()=>{if(!isBl()||S.over!=null||RP||!$("game").classList.contains("on"))return;clk[S.t]-=.2;if(clk[S.t]<=0){clk[S.t]=0;clkUI();if(mode==5)return onTimeout();endGame(1-S.t,"tmo")}else clkUI()},200);
+/* ---------- desenho ---------- */
+const canWall=()=>S.over==null&&S.t==0&&!busy&&!RP&&S.w[0]>0&&(mode!=0||tstep>=TUT.length||!!TUT[tstep].wall);
+function render(){const g=S;if(!ANI)pv=[g.p[0].slice(),g.p[1].slice()];const me=g.t==0&&g.over==null&&!busy&&!RP;let s="";
+const gc=(r,c)=>r==0?"#4d3f1f":r==8?"#4f2128":((r+c)%2?"#2d2521":"#262019");
+s+=`<rect width="99" height="99" rx="2" fill="var(--pn)"/>`;
+for(let r=0;r<N;r++)for(let c=0;c<N;c++)s+=`<rect data-c="${r},${c}" x="${c*11}" y="${r*11}" width="10" height="10" rx=".8" fill="${gc(r,c)}" stroke="rgba(212,175,106,.2)" stroke-width=".4"/>`;
+if(me)for(const [r,c] of moves(g,0))s+=`<circle data-c="${r},${c}" cx="${c*11+5}" cy="${r*11+5}" r="2.2" fill="var(--g)" stroke="#6b4600" stroke-width=".4"/>`;
+const wl=(t,k,o,cl)=>{const [r,c]=k.split(",").map(Number),f=o?"var(--r)":"var(--g)",H=t=="H",x=H?c*11:c*11+9,y=H?r*11+9:r*11,w=H?21:2.6,h=H?2.6:21;
+return `<rect class="${cl||""}" x="${x}" y="${y}" width="${w}" height="${h}" rx="1.3" fill="${f}" stroke="rgba(0,0,0,.55)" stroke-width=".5"/>`+(o&&cfg.cb?`<rect x="${x+.9}" y="${y+.9}" width="${w-1.8}" height="${h-1.8}" rx=".6" fill="none" stroke="#fff" stroke-width=".35" stroke-dasharray="1.2 1"/>`:"")};
+g.H.forEach((o,k)=>s+=wl("H",k,o,"H"+k==lastW?"nw":""));g.V.forEach((o,k)=>s+=wl("V",k,o,"V"+k==lastW?"nw":""));
+if(hint){if(hint.m)s+=`<circle cx="${hint.m[1]*11+5}" cy="${hint.m[0]*11+5}" r="4.4" fill="none" stroke="#facc15" stroke-width="1"/>`;else{const [t,r,c]=hint.w;s+=wl(t,K(r,c),0).replace("var(--g)","#facc15")}}
+if(drag&&drag.at){const [r,c]=drag.at,ok=wallOK(g,drag.t,r,c);s+=wl(drag.t,K(r,c),0).replace("var(--g)",ok?"#ffffffcc":"#ff3b30cc")}
+const pp=pl=>{const [r,c]=pv[pl],cx=c*11+5,cy=r*11+5;if(pl==1&&cfg.cb)return `<rect x="${cx-3.4}" y="${cy-3.4}" width="6.8" height="6.8" rx="1.2" transform="rotate(45 ${cx} ${cy})" fill="url(#gr)" stroke="#2a0a10" stroke-width=".6"/>`;return `<circle cx="${cx}" cy="${cy}" r="4.2" fill="url(#${pl?"gr":"gg"})" stroke="${pl?"#2a0a10":"#3a2a10"}" stroke-width=".6"/>`};
+s+=pp(1)+pp(0);
+sv.querySelectorAll(":scope>:not(defs)").forEach(n=>n.remove());sv.insertAdjacentHTML("beforeend",s);
+const seg=n=>Array.from({length:10},(_,i)=>`<i class="${i<n?"f":""}"></i>`).join("");$("ow").innerHTML=seg(g.w[1]);$("mw").innerHTML=seg(g.w[0]);$("mc").textContent=T("left",g.w[0]);
+$("ms").textContent=RP||g.over!=null?"":g.t==0?T("msMy"):T("msAi");
+if(RP)$("rpt").textContent=T("mv",RP.i,RP.mv.length)+" · "+(RP.h.w==0?T("w"):T("l"));
+for(const id of["wh","wv"])$(id).classList.toggle("d",!canWall());
+const free=mode==0||mode==3||mode==5;$("hc").textContent=hints;$("uc").textContent=undos;$("hn").disabled=!me||!hints||free;$("un").disabled=!me||!undos||!stack.length||free;$("ch").disabled=mode==0;$("gv").disabled=g.over!=null;clkUI()}
+/* ---------- interação ---------- */
+sv.addEventListener("click",e=>{const t=e.target;if(S.over!=null||S.t!=0||busy||RP||!t.dataset.c)return;const m=t.dataset.c.split(",").map(Number);if(moves(S,0).some(x=>x[0]==m[0]&&x[1]==m[1]))human({m})});
+function pos(e){const b=sv.getBoundingClientRect(),x=(e.clientX-b.left)/b.width*99,y=(e.clientY-b.top-70)/b.height*99;if(x<-8||x>107||y<-8||y>107)return null;return[Math.max(0,Math.min(7,Math.round((y-10.5)/11))),Math.max(0,Math.min(7,Math.round((x-10.5)/11)))]}
+for(const [id,t] of[["wh","H"],["wv","V"]]){const b=$(id);b.addEventListener("pointerdown",e=>{if(!canWall())return;b.setPointerCapture(e.pointerId);drag={t,at:null};hint=null;render()});
+b.addEventListener("pointermove",e=>{if(!drag||drag.t!=t)return;drag.at=pos(e);render()});
+b.addEventListener("pointerup",e=>{if(!drag||drag.t!=t)return;const at=pos(e);drag=null;if(at&&canWall()&&wallOK(S,t,at[0],at[1]))human({w:[t,at[0],at[1]]});else render()});
+b.addEventListener("pointercancel",()=>{drag=null;render()})}
+$("hn").onclick=()=>{if(!hints)return;hints--;hint=best(S,0,0);render()};
+$("un").onclick=()=>{if(!undos||!stack.length)return;undos--;const st=stack.pop();S=st.s;rec.length=st.rl;hint=null;busy=false;render()};
+$("gv").onclick=()=>{dl.innerHTML=`<b>${T("resq")}</b><button onclick="dl.close();giveUp()">${T("resy")}</button><button onclick="dl.close()">${T("cont")}</button>`;dl.showModal()};
+$("op").onclick=()=>{dl.innerHTML=`<b>${T("opts")}</b>${mode==5?"":`<button onclick="dl.close();newGame(mode)">${T("restart")}</button>`}<button onclick="openSet()">${T("set")}</button><button onclick="dl.close();menu()">${T("back")}</button><button onclick="dl.close()">${T("close")}</button>`;dl.showModal()};
+/* ---------- chat rápido ---------- */
+const EM=["👍","😄","😮","🤝","🔥","😅"],msgT=i=>i<6?T("m"+i):EM[i-6];
+function bub(w,t){const e=$(w=="m"?"bm":"bo");e.textContent=t;e.style.display="block";clearTimeout(bt[w]);bt[w]=setTimeout(()=>e.style.display="none",3000)}
+function say(i){dl.close();bub("m",msgT(i));if(mode==5)return onSay(i);if(S.over!=null)return;const r=i==1?T("m0"):i==0?T("m1"):i==2?T("r_de"):i==3?T("r_ty"):i==4?T("r_go"):"👍";setTimeout(()=>bub("o",r),1200)}
+$("ch").onclick=()=>{dl.innerHTML=`<b>${T("chatT")}</b><div class="cg">${Array.from({length:12},(_,i)=>`<button onclick="say(${i})">${msgT(i)}</button>`).join("")}</div><button onclick="dl.close()">${T("close")}</button>`;dl.showModal()};
+/* ---------- menu, níveis, ajustes, perfil, histórico ---------- */
+function levels(m){dl.innerHTML=`<b>${T("levels")}</b><p>${T("lvsub")}</p>${TA("lv").map((n,i)=>`<button onclick="dl.close();lvl=${i};newGame(${m})">${n}</button>`).join("")}<button onclick="dl.close()">${T("cancel")}</button>`;dl.showModal()}
+function openSet(){const on=v=>T(v?"on":"off");dl.innerHTML=`<b>${T("set")}</b><button onclick="tg('snd')">${T("snd")}: ${on(cfg.snd)}</button><button onclick="tg('vib')">${T("vib")}: ${on(cfg.vib)}</button><button onclick="tg('cb')">${T("cb")}: ${on(cfg.cb)}</button><div class="cg">${["pt","en","es"].map(l=>`<button onclick="setLang('${l}')">${LN[l]}${cfg.lang==l?" ✓":""}</button>`).join("")}</div><button onclick="dl.close()">${T("close")}</button>`;if(!dl.open)dl.showModal()}
+function tg(k){cfg[k]=cfg[k]?0:1;save("cfg2",cfg);openSet();if($("game").classList.contains("on"))render()}
+function setLang(l){cfg.lang=l;save("cfg2",cfg);applyLang();openSet()}
+function curStreak(){const d=prof.daily;return d.last==todayKey()||d.last==yestKey()?d.streak:0}
+function openProf(){const A=[0,1,2,3,4,5].map(i=>`${prof.ach["a"+i]?"✦":"·"} ${T("a"+i)}`).join("<br>");dl.innerHTML=`<b>${T("prof")}</b><p>${T("games")}: ${prof.games} · ${T("wins")}: ${prof.wins}<br>${T("rk")}: ${rate.elo} (${tier(rate.elo)}) · ${rate.w}/${rate.l}<br>${T("streak")}: ${T("days",curStreak())}</p><p style="text-align:left;color:var(--tx)">${T("ach")}<br>${A}</p><button onclick="dl.close()">${T("close")}</button>`;dl.showModal()}
+const fdate=d=>new Date(d).toLocaleString(cfg.lang,{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+function openHist(){RP=null;$("hl").innerHTML=hist.length?hist.map((h,i)=>`<button class="hi" onclick="openReplay(${i})"><span>${fdate(h.d)} · ${h.m==2?T("ranked"):h.m==3?T("daily"):h.m==4?T("blitz"):TA("lv")[h.l]}</span><span>${h.w==0?T("w"):T("l")} · ${T("moves",h.mv.length)}</span></button>`).join(""):`<p style="color:var(--mu);text-align:center;margin-top:30px">${T("nohist")}</p>`;show("hist")}
+function rpState(i){const g=fresh();for(let k=0;k<i;k++){const e=RP.mv[k];put(g,e[0],dec(e))}return g}
+function openReplay(i){const h=hist[i];if(!h)return;RP={mv:h.mv,i:h.mv.length,h,from:$("hist").classList.contains("on")};mode=9;busy=true;stack=[];lastW=null;hint=null;S=rpState(RP.i);setLabel();$("game").classList.add("rpl");ban();show("game");render()}
+function rpGo(i){if(!RP)return;RP.i=Math.max(0,Math.min(RP.mv.length,i));S=rpState(RP.i);lastW=null;snd("click");render()}
+$("r0").onclick=()=>rpGo(0);$("r1").onclick=()=>rpGo(RP.i-1);$("r2").onclick=()=>rpGo(RP.i+1);$("r3").onclick=()=>rpGo(RP.mv.length);
+const leave=()=>{if(RP&&RP.from)openHist();else menu()};$("rx").onclick=leave;$("hb").onclick=menu;
+$("bk").onclick=()=>{if(RP)leave();else menu()};
+$("b1").onclick=()=>{if(!prof.tut&&!prof.games&&!askedTut){askedTut=true;dl.innerHTML=`<b>${T("ask")}</b><button onclick="dl.close();newGame(0)">${T("yesT")}</button><button onclick="dl.close();levels(1)">${T("skip")}</button>`;dl.showModal()}else levels(1)};
+$("b4").onclick=()=>levels(4);$("b5").onclick=()=>newGame(3);$("b3").onclick=()=>newGame(2);$("mt").onclick=()=>newGame(0);$("mh").onclick=openHist;$("mp").onclick=openProf;$("mset").onclick=openSet;
+function applyLang(){document.documentElement.lang=cfg.lang;document.querySelectorAll("[data-i]").forEach(e=>e.textContent=T(e.dataset.i));if($("menu").classList.contains("on"))menu();if($("game").classList.contains("on")){setLabel();ban();render()}}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("button"))snd("click")});
+applyLang();menu();
+</script>
+<script>
+/* ---------- ONLINE (Supabase, sem biblioteca externa) ---------- */
+const SB_URL="https://outqmfmomrruxwrsudwe.supabase.co",SB_KEY="sb_publishable_DbWPuWB27WL2xIy9caY0Og_ufvENG0m";
+const OT={pt:{sub:"Jogar com amigo",title:"Online",create:"Criar sala",join:"Entrar com código",code:"CÓDIGO",go:"Entrar",wait:"Passe este código ao seu amigo e aguarde…",err:"Sem conexão com o servidor.",oppres:"O adversário desistiu.",conn:"Conectando…",back:"Voltar",cancel:"Cancelar",opp:"Adversário",bad:"Jogada recusada. Sincronizando…",pts:"pontos",onl:"online",casual:"Partida casual",friend:"Jogar com amigo",find:"Procurando adversário…",few:"Poucos jogadores agora. Quer treinar contra a máquina enquanto isso?",train:"Treinar contra a máquina",retry:"Tentar de novo",leave:"Sair da partida? Conta como desistência.",leaveY:"Desistir e sair",stay:"Continuar jogando",resume:"Continuar partida online",acct:"Conta online",guest:"Você joga como convidado.",nick:"Apelido",nickS:"Salvar apelido",save:"Salvar conta com e-mail",login:"Entrar com e-mail",logout:"Sair da conta",del:"Excluir minha conta",delq:"Excluir sua conta e seus dados? Isso não pode ser desfeito.",delY:"Sim, excluir tudo",email:"E-mail",pass:"Senha (mín. 8)",sent:"Enviamos um e-mail de confirmação. Confirme para salvar a conta.",ok:"Pronto.",privacy:"Política de privacidade",bye:"Conta excluída."},
+en:{sub:"Play with a friend",title:"Online",create:"Create room",join:"Join with code",code:"CODE",go:"Join",wait:"Share this code with your friend and wait…",err:"Can't reach the server.",oppres:"Your opponent resigned.",conn:"Connecting…",back:"Back",cancel:"Cancel",opp:"Opponent",bad:"Move rejected. Syncing…",pts:"points",onl:"online",casual:"Casual match",friend:"Play with a friend",find:"Looking for an opponent…",few:"Few players right now. Train against the computer meanwhile?",train:"Train vs computer",retry:"Try again",leave:"Leave the match? Counts as a resignation.",leaveY:"Resign and leave",stay:"Keep playing",resume:"Resume online match",acct:"Online account",guest:"You are playing as a guest.",nick:"Nickname",nickS:"Save nickname",save:"Save account with e-mail",login:"Sign in with e-mail",logout:"Sign out",del:"Delete my account",delq:"Delete your account and data? This cannot be undone.",delY:"Yes, delete everything",email:"E-mail",pass:"Password (min. 8)",sent:"We sent a confirmation e-mail. Confirm it to save the account.",ok:"Done.",privacy:"Privacy policy",bye:"Account deleted."},
+es:{sub:"Jugar con un amigo",title:"Online",create:"Crear sala",join:"Entrar con código",code:"CÓDIGO",go:"Entrar",wait:"Pasa este código a tu amigo y espera…",err:"Sin conexión con el servidor.",oppres:"Tu rival se rindió.",conn:"Conectando…",back:"Volver",cancel:"Cancelar",opp:"Rival",bad:"Jugada rechazada. Sincronizando…",pts:"puntos",onl:"online",casual:"Partida casual",friend:"Jugar con un amigo",find:"Buscando rival…",few:"Pocos jugadores ahora. ¿Entrenar contra la máquina?",train:"Entrenar contra la máquina",retry:"Reintentar",leave:"¿Salir de la partida? Cuenta como rendición.",leaveY:"Rendirse y salir",stay:"Seguir jugando"}};
+const ot=k=>(OT[cfg.lang]&&OT[cfg.lang][k])||OT.pt[k];
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ON={mid:null,my:0,ply:0,opp:"",poll:null,wait:null,q:[],pump:false,queued:false,kind:"friend",cid:0,tmo:false,elo:null,qk:"casual",info:null,syncing:false};
+/* --- autenticação por REST --- */
+const AU=Object.assign({tok:null,ref:null,exp:0,uid:null,email:null,anon:true},ld("sbauth",{}));
+const auSave=()=>save("sbauth",{tok:AU.tok,ref:AU.ref,exp:AU.exp,uid:AU.uid,email:AU.email,anon:AU.anon});
+function auSet(r){AU.tok=r.access_token;AU.ref=r.refresh_token;AU.exp=Date.now()+Math.max(60,(r.expires_in||3600)-60)*1000;AU.uid=r.user.id;AU.email=r.user.email||null;AU.anon=!!r.user.is_anonymous;auSave()}
+function auClear(){AU.tok=AU.ref=AU.uid=AU.email=null;AU.exp=0;AU.anon=true;auSave();ON.elo=null}
+async function api(path,o){o=o||{};const h={apikey:SB_KEY,"Content-Type":"application/json"};if(o.auth!==false&&AU.tok)h.Authorization="Bearer "+AU.tok;let r;
+try{r=await fetch(SB_URL+path,{method:o.method||"GET",headers:Object.assign(h,o.headers||{}),body:o.body!==undefined?JSON.stringify(o.body):undefined})}catch(e){const x=new Error("net");x.net=true;throw x}
+const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){j=t}
+if(!r.ok){const x=new Error((j&&(j.message||j.msg||j.error_description||j.error))||("HTTP "+r.status));x.status=r.status;throw x}return j}
+async function ensureAuth(){if(AU.tok&&Date.now()<AU.exp)return;
+if(AU.ref){try{auSet(await api("/auth/v1/token?grant_type=refresh_token",{method:"POST",auth:false,body:{refresh_token:AU.ref}}));return}catch(e){if(e.net)throw e;auClear()}}
+auSet(await api("/auth/v1/signup",{method:"POST",auth:false,body:{}}))}
+const rpc=async(f,a)=>{await ensureAuth();return api("/rest/v1/rpc/"+f,{method:"POST",body:a||{}})};
+const sel=async p=>{await ensureAuth();return api("/rest/v1/"+p)};
+/* --- tradução de posições: o servidor guarda tudo do ponto de vista do jogador 0 --- */
+const rotA=a=>a.m?{m:[8-a.m[0],8-a.m[1]]}:{w:[a.w[0],7-a.w[1],7-a.w[2]]};
+const toTxt=a=>a.p?"p,0,0":a.m?"m,"+a.m[0]+","+a.m[1]:a.w.join(","),fromTxt=t=>{const p=t.split(",");return p[0]=="p"?{p:1}:p[0]=="m"?{m:[+p[1],+p[2]]}:{w:[p[0],+p[1],+p[2]]}};
+const toLoc=a=>a.p?a:ON.my?rotA(a):a;
+function onClean(){if(ON.queued){ON.queued=false;rpc("cancel_queue").catch(()=>{})}clearInterval(ON.poll);clearInterval(ON.wait);ON.poll=ON.wait=null;ON.mid=null;ON.q=[];ON.pump=false;ON.syncing=false}
+function onDlg(h){dl.innerHTML=h;if(!dl.open)dl.showModal()}
+const onFail=(e,retry)=>{onClean();const net=!e||e.net||/fetch|network|Failed/i.test(e.message||"");onDlg(`<b>${ot("title")}</b><p>${esc(net?ot("err"):e.message)}</p>${net?`<button onclick="onTrain()">${ot("train")}</button>`:""}${retry?`<button onclick="${retry}">${ot("retry")}</button>`:""}<button onclick="dl.close()">${ot("back")}</button>`)};
+function openOnlineMenu(){onDlg(`<b>${T("online")}</b><button onclick="onQueue('casual')">${ot("casual")}</button><button onclick="openOnline()">${ot("friend")}</button><button onclick="dl.close()">${ot("back")}</button>`)}
+function openOnline(){onDlg(`<b>${ot("friend")}</b><button onclick="onCreate()">${ot("create")}</button><p>${ot("join")}</p><input id="jc" maxlength="5" autocomplete="off" autocapitalize="characters" placeholder="${ot("code")}" style="width:100%;padding:12px;margin-top:8px;text-align:center;font:700 22px Cinzel,serif;letter-spacing:6px;text-transform:uppercase;background:#0f0a07;color:var(--g);border:1px solid var(--gold);border-radius:6px"><button onclick="onJoin()">${ot("go")}</button><button onclick="dl.close()">${ot("back")}</button>`)}
+async function onCreate(){try{onClean();ON.qk="casual";onDlg(`<b>${ot("conn")}</b>`);const code=await rpc("create_room");
+onDlg(`<b>${ot("friend")}</b><p>${ot("wait")}</p><p style="font:700 44px Cinzel,serif;letter-spacing:8px;color:var(--g);margin:14px 0">${esc(code)}</p><button onclick="onClean();dl.close()">${ot("cancel")}</button>`);
+ON.wait=setInterval(async()=>{try{const q=await sel("rooms?code=eq."+encodeURIComponent(code)+"&select=match_id");if(q&&q[0]&&q[0].match_id){clearInterval(ON.wait);onStart(q[0].match_id)}}catch(e){}},2000)}catch(e){onFail(e,"onCreate()")}}
+async function onJoin(){const c=($("jc").value||"").trim().toUpperCase();if(c.length<4)return;try{onDlg(`<b>${ot("conn")}</b>`);onStart(await rpc("join_room",{p_code:c}))}catch(e){onFail(e,"openOnline()")}}
+async function onQueue(kind){try{onClean();ON.qk=kind;onDlg(`<b>${ot("conn")}</b>`);await ensureAuth();ON.queued=true;const t0=Date.now();
+onDlg(`<b>${ot("find")}</b><p id="qs" style="font:700 30px Cinzel,serif;color:var(--g)">0s</p><div id="qf"></div><button onclick="onClean();dl.close()">${ot("cancel")}</button>`);
+const tick=async()=>{if(!ON.queued)return;const s=Math.floor((Date.now()-t0)/1000);const el=$("qs");if(el)el.textContent=s+"s";if(s>=15&&$("qf")&&!$("qf").innerHTML)$("qf").innerHTML=`<p>${ot("few")}</p><button onclick="onTrain()">${ot("train")}</button>`;
+try{const id=await rpc("find_match",{p_kind:kind});if(id&&ON.queued){ON.queued=false;clearInterval(ON.wait);onStart(id)}}catch(e){if(ON.queued)onFail(e,"onQueue('"+kind+"')")}};
+ON.wait=setInterval(tick,2000);tick()}catch(e){onFail(e,"onQueue('"+kind+"')")}}
+function onTrain(){const k=ON.qk;onClean();dl.close();if(k=="ranked")newGame(2);else if(k=="blitz")levels(4);else levels(1)}
+function onAgain(){dl.close();if(ON.kind&&ON.kind!="friend")onQueue(ON.kind);else openOnline()}
+/* --- partida --- */
+function onGoal(){for(const pl of[0,1])if(S.p[pl][0]==GR(pl))S.over=pl}
+function onRebuild(rows){S=fresh();for(const r of rows){const l=r.player==ON.my?0:1,a=toLoc(fromTxt(r.action));if(!a.p)put(S,l,a)}ON.ply=rows.length;S.t=ON.ply%2==ON.my?0:1;onGoal()}
+async function onStart(mid,resume){try{onClean();const g=await rpc("sync_match",{p_match:mid,p_ply:0,p_chat:0});if(!g)throw new Error("partida não encontrada");
+if(resume&&g.status!="active"){save("bqm",null);return menu()}
+ON.mid=mid;ON.my=g.p0==AU.uid?0:1;ON.kind=g.kind;onlineBlitz=g.kind=="blitz";clk=[90,90];ON.tmo=false;ON.opp=esc((ON.my?g.nick0:g.nick1)||ot("opp"));ON.cid=g.chat.length?g.chat[g.chat.length-1].id:0;
+mode=5;RP=null;$("game").classList.remove("rpl");stack=[];rec=[];hints=0;undos=0;drag=null;hint=null;busy=false;turns=0;lastW=null;tstep=0;newAch=[];onRebuild(g.moves);onClocks(g);dl.close();setLabel();show("game");ban();render();save("bqm",mid);
+ON.poll=setInterval(onPull,1500);onAutoPass()}catch(e){onFail(e,null)}}
+function onClocks(g){if(!onlineBlitz||!g)return;const c=[+g.clock0,+g.clock1],t=g.ply%2;if(g.status=="active")c[t]=Math.max(0,c[t]-g.elapsed);clk=[c[ON.my],c[1-ON.my]]}
+async function onPull(full){const mid=ON.mid;if(!mid||mode!=5||ON.syncing)return;ON.syncing=true;try{const g=await rpc("sync_match",{p_match:mid,p_ply:full===true?0:ON.ply,p_chat:ON.cid});if(mid!=ON.mid||!g)return;ON.info=g;
+if(g.ply<ON.ply||full===true){onRebuild((await rpc("sync_match",{p_match:mid,p_ply:0,p_chat:ON.cid})).moves);busy=false;ON.q=[];render()}else for(const r of g.moves)if(r.player!=ON.my&&r.ply>=ON.ply+ON.q.length)onEnq(r);
+for(const c of g.chat){if(c.player!=ON.my)bub("o",msgT(c.i));ON.cid=Math.max(ON.cid,c.id)}onClocks(g);
+if(g.status=="finished"&&S.over==null&&!ON.q.length&&!ON.pump){save("bqm",null);if(g.reason=="timeout")return endGame(g.winner==ON.my?0:1,"tmo");if(g.winner==ON.my){if(g.reason=="resign")bub("m",ot("oppres"));endGame(0,"opp")}else endGame(1,"res")}}catch(e){}finally{ON.syncing=false}}
+async function onTimeout(){if(ON.tmo||!ON.mid)return;ON.tmo=true;try{await rpc("claim_timeout",{p_match:ON.mid})}catch(e){}await onPull();setTimeout(()=>{ON.tmo=false},2000)}
+function onEnq(r){ON.q.push(r);onPump()}
+function onAutoPass(){if(mode!=5||S.over!=null||S.t!=0||busy||ON.pump)return;if(!moves(S,0).length&&S.w[0]==0){ON.ply++;rpc("submit_move",{p_match:ON.mid,p_action:"p,0,0"}).catch(()=>onPull(true));S.t=1;render()}}
+function onPump(){if(ON.pump||!ON.q.length)return;ON.pump=true;const r=ON.q.shift();if(r.ply!=ON.ply||S.over!=null){ON.pump=false;return onPump()}ON.ply++;const a=toLoc(fromTxt(r.action));
+if(a.p){ON.pump=false;S.t=0;render();onAutoPass();return onPump()}
+busy=true;S.t=1;doAct(1,a,()=>{busy=false;ON.pump=false;if(isBl())clk[1]+=2;if(S.over!=null)return;if(finish())return;S.t=0;render();onAutoPass();onPump()})}
+function onHuman(a){if(S.over!=null||S.t!=0||busy||ON.pump)return;turns++;hint=null;busy=true;ON.ply++;
+rpc("submit_move",{p_match:ON.mid,p_action:toTxt(toLoc(a))}).catch(e=>{bub("m",e.net?ot("err"):ot("bad"));ON.ply=Math.max(0,ON.ply-1);onPull(true)});
+doAct(0,a,()=>{if(a.w){prof.walls++;save("prof2",prof)}if(S.over!=null)return;if(finish())return;if(isBl())clk[0]+=2;busy=false;S.t=1;render()})}
+function onSay(i){if(ON.mid)rpc("send_chat",{p_match:ON.mid,p_i:i}).catch(()=>{})}
+function leaveNow(){const m=ON.mid;if(m)rpc("resign",{p_match:m}).catch(()=>{});save("bqm",null);S.over=1;menu()}
+function onResign(){if(S.over!=null)return;if(ON.mid)rpc("resign",{p_match:ON.mid}).catch(()=>{});endGame(1,"res")}
+/* --- pontos / menu --- */
+async function onElo(){if(!AU.uid)return;try{const q=await sel("profiles?id=eq."+AU.uid+"&select=elo,nickname");if(q&&q[0]){ON.elo=q[0].elo;ON.nick=q[0].nickname;menuRt()}}catch(e){}}
+function menuRt(){const e=ON.elo==null?1000:ON.elo;$("rt").textContent=`${e} ${ot("pts")} · ${tier(e)} · ${ot("onl")}`}
+async function onEloInfo(){const el=$("eld");if(!el)return;try{const d=await rpc("sync_match",{p_match:ON.lastMid||ON.mid,p_ply:99999,p_chat:99999999});if(d&&d.kind=="ranked"&&d.delta0!=null){const x=ON.my?d.delta1:d.delta0;await onElo();if($("eld"))$("eld").textContent=`${x>0?"+":""}${x} · ${ON.elo} ${ot("pts")} · ${tier(ON.elo)}`}}catch(e){}}
+/* --- conta --- */
+const inp=(id,ph,type)=>`<input id="${id}" type="${type||"text"}" placeholder="${ph}" autocomplete="off" style="width:100%;padding:12px;margin-top:8px;background:#0f0a07;color:var(--tx);border:1px solid var(--gold);border-radius:6px;font:16px 'Cormorant Garamond',serif">`;
+async function openAcct(){onDlg(`<b>${ot("acct")}</b><p>${ot("conn")}</p>`);try{await ensureAuth();await onElo()}catch(e){return onFail(e,"openAcct()")}
+const st=AU.anon?ot("guest"):esc(AU.email||"");
+onDlg(`<b>${ot("acct")}</b><p>${st}</p>${inp("an",ot("nick"))}<button onclick="acctNick()">${ot("nickS")}</button>${AU.anon?`<button onclick="acctForm('save')">${ot("save")}</button><button onclick="acctForm('login')">${ot("login")}</button>`:`<button onclick="acctLogout()">${ot("logout")}</button>`}<button onclick="acctDelAsk()">${ot("del")}</button><p><a href="${PRIV_URL}" target="_blank" rel="noopener" style="color:var(--g)">${ot("privacy")}</a></p><button onclick="dl.close()">${ot("back")}</button>`);if($("an"))$("an").value=ON.nick||""}
+const PRIV_URL="#";
+async function acctNick(){const v=($("an").value||"").trim();if(v.length<3||v.length>20)return;try{await ensureAuth();await api("/rest/v1/profiles?id=eq."+AU.uid,{method:"PATCH",body:{nickname:v}});ON.nick=v;bub("m",ot("ok"))}catch(e){bub("m",e.net?ot("err"):e.message)}}
+function acctForm(k){onDlg(`<b>${ot(k=="save"?"save":"login")}</b>${inp("ae",ot("email"),"email")}${inp("ap",ot("pass"),"password")}<button onclick="acctGo('${k}')">${ot("go")}</button><button onclick="openAcct()">${ot("back")}</button>`)}
+async function acctGo(k){const e=($("ae").value||"").trim(),p=$("ap").value||"";if(!e||p.length<8)return;try{await ensureAuth();
+if(k=="save"){await api("/auth/v1/user",{method:"PUT",body:{email:e,password:p}});onDlg(`<b>${ot("acct")}</b><p>${ot("sent")}</p><button onclick="dl.close()">${ot("back")}</button>`)}
+else{auSet(await api("/auth/v1/token?grant_type=password",{method:"POST",auth:false,body:{email:e,password:p}}));ON.elo=null;await onElo();menuRt();openAcct()}}catch(x){onFail(x,"acctForm('"+k+"')")}}
+function acctLogout(){auClear();menuRt();dl.close()}
+function acctDelAsk(){onDlg(`<b>${ot("del")}</b><p>${ot("delq")}</p><button onclick="acctDel()">${ot("delY")}</button><button onclick="openAcct()">${ot("cancel")}</button>`)}
+async function acctDel(){try{await rpc("delete_my_account");auClear();save("bqm",null);menuRt();onDlg(`<b>${ot("bye")}</b><button onclick="dl.close()">${ot("back")}</button>`)}catch(e){onFail(e,"acctDelAsk()")}}
+/* --- ligações com o menu do jogo --- */
+const _menu=menu;menu=function(){if(ON.mid)ON.lastMid=ON.mid;onClean();_menu();$("b2s").textContent=ot("friend");menuRt();onElo();resumeBtn()};
+function resumeBtn(){const m=ld("bqm",null);$("b6").style.display=m?"block":"none";$("b6t").textContent=ot("resume")}
+const _op=openProf;openProf=function(){_op();dl.innerHTML=dl.innerHTML.replace('<button onclick="dl.close()">','<button onclick="openAcct()">'+ot("acct")+'</button><button onclick="dl.close()">')};
+$("bk").onclick=()=>{if(RP)return leave();if(mode==5&&S.over==null){onDlg(`<b>${ot("leave")}</b><button onclick="dl.close();leaveNow()">${ot("leaveY")}</button><button onclick="dl.close()">${ot("stay")}</button>`);return}menu()};
+$("b2").onclick=openOnlineMenu;$("b3").onclick=()=>onQueue("ranked");$("b4").onclick=()=>onQueue("blitz");$("b6").onclick=()=>{const m=ld("bqm",null);if(m)onStart(m,true)};
+$("mp").onclick=openProf;$("b2s").textContent=ot("friend");menuRt();onElo();resumeBtn();
+</script>
+</body></html>
