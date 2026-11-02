@@ -134,7 +134,11 @@ button.pkbuy{margin:10px 0 0;width:100%;background:linear-gradient(#35d27f,#1792
 .sh2{font:700 13px Cinzel,serif;letter-spacing:1.5px;color:#e8c76a;text-align:left;margin:10px 0 6px;border-bottom:1px solid #4a3a25;padding-bottom:3px}
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cd{position:relative;background:linear-gradient(#2c2018,#18110c);border:1px solid #5a4528;border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
-.cd.wide{grid-column:1/-1}.cd.eq{border-color:#35d27f;box-shadow:0 0 10px #35d27f66}.cd.lk2 .cp{filter:grayscale(.55) brightness(.75)}
+.cd.wide{grid-column:1/-1}.cd.eq{border:2.5px solid #35e08a!important;background:linear-gradient(#1c4a33,#0e2a1c)!important;box-shadow:0 0 0 2px #0a0706,0 0 18px #35e08acc;transform:scale(1.02)}
+.ckm{position:absolute;top:-9px;right:-7px;width:26px;height:26px;border-radius:50%;background:linear-gradient(#5af0a0,#17a05a);color:#fff;font:900 16px/26px sans-serif;font-style:normal;text-align:center;border:2px solid #0a0706;box-shadow:0 2px 6px #000a;z-index:2}
+.eqp{background:#35e08a;color:#06210f!important;border-radius:10px;padding:2px 10px;font-weight:800!important;letter-spacing:1px;opacity:1!important}
+.usp{border:1.5px solid #e8c76a;border-radius:10px;padding:2px 12px;color:#ffe6a8;opacity:1!important}
+.cd:not(.eq):not(.lk2){opacity:.92}.cd.lk2 .cp{filter:grayscale(.55) brightness(.75)}
 .cp{min-height:56px;display:grid;place-items:center}.cnm{font:700 13px Cinzel,serif;color:#f1e3c0;letter-spacing:.5px}
 .cd small{font-size:11px;opacity:.9}.cok{color:#6ff0a8;font-weight:700}.cuse{color:#ffe6a8;font-weight:700;letter-spacing:1px}.creq{color:#cbbd9b;line-height:1.15}
 button.cbuy{margin:4px 0 0!important;width:auto!important;padding:7px 14px!important;font-size:12px!important;letter-spacing:1px!important;background:linear-gradient(#35d27f,#17924f)!important;border:1px solid #8bf0b8!important;color:#fff!important;border-radius:999px!important;font-weight:800!important}
@@ -633,8 +637,8 @@ return `<svg class="fxp" viewBox="0 0 80 68" width="${z*1.3}" height="${z*1.1}">
 if(it.k=="frm")return `<div class="av ${id=="none"?"":"f-"+id}" style="width:46px;height:46px;margin:12px auto 8px;font-size:0"><svg viewBox="0 0 24 24" width="26" height="26" style="opacity:.55"><circle cx="12" cy="9" r="4.2" fill="#d4af6a"/><path d="M3.5 21c.8-5 4.5-7 8.5-7s7.700 2 8.500 7z" fill="#d4af6a"/></svg></div>`;
 return id=="none"?`<div class="ttp tn">${esc(L3(TTL[id].n))}</div>`:`<div class="ttp" style="--tc:hsl(${(+id.slice(1)*40+20)%360} 90% 60% / .5)">${esc(L3(TTL[id].n))}</div>`}
 function cosCard(it,shop){const own=cosOwn(it),eq=!shop&&cosCur(it.k)==it.id,wide=it.k=="ttl";
-const act=own?(shop?`<small class="cok">${LB("have")}</small>`:eq?`<small class="cok">${LB("inuse")}</small>`:`<small class="cuse">${LB("use")}</small>`):`<small class="creq">🔒 ${esc(cosReq(it))}</small>${it.pr?`<button class="cbuy" onclick="event.stopPropagation();buyItem('${it.k}:${it.id}')">${rs(it.pr)}</button>`:""}`;
-return `<div class="cd${eq?" eq":""}${own?"":" lk2"}${wide?" wide":""}" ${own&&!shop?`onclick="collUse('${it.k}','${it.id}')"`:""}><div class="cp">${cosPrev(it)}</div><div class="cnm">${esc(L3(it.n))}</div>${act}</div>`}
+const act=own?(shop?`<small class="cok">${LB("have")}</small>`:eq?`<small class="cok eqp">✓ ${LB("inuse")}</small>`:`<small class="cuse usp">${LB("use")}</small>`):`<small class="creq">🔒 ${esc(cosReq(it))}</small>${it.pr?`<button class="cbuy" onclick="event.stopPropagation();buyItem('${it.k}:${it.id}')">${rs(it.pr)}</button>`:""}`;
+return `<div class="cd${eq?" eq":""}${own?"":" lk2"}${wide?" wide":""}" ${own&&!shop?`onclick="collUse('${it.k}','${it.id}')"`:""}>${eq?`<i class="ckm">✓</i>`:""}<div class="cp">${cosPrev(it)}</div><div class="cnm">${esc(L3(it.n))}</div>${act}</div>`}
 let COLT="orb";
 function collUse(k,id){cosEq()[k]=id;save("prof2",prof);try{menuRt()}catch(e){}openColl(COLT)}
 function openColl(tab){COLT=tab=tab||COLT||"orb";const T=[["orb","🔮",LB("tab_orb")],["brd","▦",LB("tab_brd")],["fx","✨",LB("tab_fx")],["pf","🏅",LB("tab_pf")]];
