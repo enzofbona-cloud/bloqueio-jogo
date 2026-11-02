@@ -192,7 +192,7 @@ const pp=pl=>{const [r,c]=pv[pl],cx=c*11+5,cy=r*11+5;if(pl==1&&cfg.cb)return `<r
 s+=pp(1)+pp(0);
 sv.querySelectorAll(":scope>:not(defs)").forEach(n=>n.remove());sv.insertAdjacentHTML("beforeend",s);
 const seg=n=>Array.from({length:10},(_,i)=>`<i class="${i<n?"f":""}"></i>`).join("");$("ow").innerHTML=seg(g.w[1]);$("mw").innerHTML=seg(g.w[0]);$("mc").textContent=T("left",g.w[0]);
-$("ms").textContent=RP||g.over!=null?"":g.t==0?T("msMy"):T("msAi");
+$("ms").textContent=RP||g.over!=null?"":g.t==0?T("msMy"):mode==5?({pt:"Vez de ",en:"",es:"Turno de "}[cfg.lang]||"Vez de ")+(ON.nm||"")+(cfg.lang=="en"?"'s turn…":"…"):T("msAi");
 if(RP)$("rpt").textContent=T("mv",RP.i,RP.mv.length)+" · "+(RP.h.w==0?T("w"):T("l"));
 for(const id of["wh","wv"])$(id).classList.toggle("d",!canWall());
 const free=mode==0||mode==3||mode==5;$("hc").textContent=hints;$("uc").textContent=undos;$("hn").disabled=!me||!hints||free;$("un").disabled=!me||!undos||!stack.length||free;$("ch").disabled=mode==0;$("gv").disabled=g.over!=null;clkUI()}
@@ -278,26 +278,27 @@ function onTrain(){const k=ON.qk;onClean();dl.close();if(k=="ranked")newGame(2);
 function onAgain(){dl.close();if(ON.kind&&ON.kind!="friend")onQueue(ON.kind);else openOnline()}
 /* --- partida --- */
 function onGoal(){for(const pl of[0,1])if(S.p[pl][0]==GR(pl))S.over=pl}
-function onRebuild(rows){S=fresh();for(const r of rows){const l=r.player==ON.my?0:1,a=toLoc(fromTxt(r.action));if(!a.p)put(S,l,a)}ON.ply=rows.length;S.t=ON.ply%2==ON.my?0:1;onGoal()}
+function onRebuild(rows){S=fresh();for(const r of rows){const l=r.player==ON.my?0:1,a=toLoc(fromTxt(r.action));if(!a.p)put(S,l,a)}ON.ply=rows.length;S.t=ON.ply%2==ON.my?0:1;onGoal();ON.ep=(ON.ep||0)+1;ON.ver=(ON.ver||0)+1;ON.pump=false;busy=false;ON.q=[]}
 async function onStart(mid,resume){try{onClean();const g=await rpc("sync_match",{p_match:mid,p_ply:0,p_chat:0});if(!g)throw new Error("partida não encontrada");
 if(resume&&g.status!="active"){save("bqm",null);return menu()}
-ON.mid=mid;ON.my=g.p0==AU.uid?0:1;ON.kind=g.kind;onlineBlitz=g.kind=="blitz";clk=[90,90];ON.tmo=false;ON.opp=esc((ON.my?g.nick0:g.nick1)||ot("opp"));ON.cid=g.chat.length?g.chat[g.chat.length-1].id:0;
+ON.mid=mid;ON.my=g.p0==AU.uid?0:1;ON.kind=g.kind;onlineBlitz=g.kind=="blitz";clk=[90,90];ON.tmo=false;ON.nm=(ON.my?g.nick0:g.nick1)||ot("opp");ON.opp=esc(ON.nm);ON.ver=0;ON.sub=0;ON.ep=0;ON.again=false;ON.cid=g.chat.length?g.chat[g.chat.length-1].id:0;
 mode=5;RP=null;$("game").classList.remove("rpl");stack=[];rec=[];hints=0;undos=0;drag=null;hint=null;busy=false;turns=0;lastW=null;tstep=0;newAch=[];onRebuild(g.moves);onClocks(g);dl.close();setLabel();show("game");ban();render();save("bqm",mid);
 ON.poll=setInterval(onPull,1500);onAutoPass()}catch(e){onFail(e,null)}}
 function onClocks(g){if(!onlineBlitz||!g)return;const c=[+g.clock0,+g.clock1],t=g.ply%2;if(g.status=="active")c[t]=Math.max(0,c[t]-g.elapsed);clk=[c[ON.my],c[1-ON.my]]}
-async function onPull(full){const mid=ON.mid;if(!mid||mode!=5||ON.syncing)return;ON.syncing=true;try{const g=await rpc("sync_match",{p_match:mid,p_ply:full===true?0:ON.ply,p_chat:ON.cid});if(mid!=ON.mid||!g)return;ON.info=g;
-if(g.ply<ON.ply||full===true){onRebuild((await rpc("sync_match",{p_match:mid,p_ply:0,p_chat:ON.cid})).moves);busy=false;ON.q=[];render()}else for(const r of g.moves)if(r.player!=ON.my&&r.ply>=ON.ply+ON.q.length)onEnq(r);
+async function onPull(full){const mid=ON.mid;if(!mid||mode!=5)return;if(ON.syncing){if(full===true)ON.again=true;return}ON.syncing=true;const v0=ON.ver;try{const g=await rpc("sync_match",{p_match:mid,p_ply:full===true?0:ON.ply,p_chat:ON.cid});if(mid!=ON.mid||!g)return;ON.info=g;
+const calm=v0==ON.ver&&!ON.sub&&!busy&&!ON.pump&&!ON.q.length;
+if(full===true||(calm&&(g.ply<ON.ply||g.moves.some(r=>r.player==ON.my)))){const f=await rpc("sync_match",{p_match:mid,p_ply:0,p_chat:ON.cid});if(f&&v0==ON.ver&&!ON.sub){onRebuild(f.moves);render();onAutoPass()}}else for(const r of g.moves)if(r.player!=ON.my&&r.ply>=ON.ply+ON.q.length)onEnq(r);
 for(const c of g.chat){if(c.player!=ON.my)bub("o",msgT(c.i));ON.cid=Math.max(ON.cid,c.id)}onClocks(g);
-if(g.status=="finished"&&S.over==null&&!ON.q.length&&!ON.pump){save("bqm",null);if(g.reason=="timeout")return endGame(g.winner==ON.my?0:1,"tmo");if(g.winner==ON.my){if(g.reason=="resign")bub("m",ot("oppres"));endGame(0,"opp")}else endGame(1,"res")}}catch(e){}finally{ON.syncing=false}}
+if(g.status=="finished"&&S.over==null&&!ON.q.length&&!ON.pump){save("bqm",null);if(g.reason=="timeout")return endGame(g.winner==ON.my?0:1,"tmo");if(g.winner==ON.my){if(g.reason=="resign")bub("m",ot("oppres"));endGame(0,"opp")}else endGame(1,"res")}}catch(e){}finally{ON.syncing=false;if(ON.again){ON.again=false;onPull(true)}}}
 async function onTimeout(){if(ON.tmo||!ON.mid)return;ON.tmo=true;try{await rpc("claim_timeout",{p_match:ON.mid})}catch(e){}await onPull();setTimeout(()=>{ON.tmo=false},2000)}
 function onEnq(r){ON.q.push(r);onPump()}
-function onAutoPass(){if(mode!=5||S.over!=null||S.t!=0||busy||ON.pump)return;if(!moves(S,0).length&&S.w[0]==0){ON.ply++;rpc("submit_move",{p_match:ON.mid,p_action:"p,0,0"}).catch(()=>onPull(true));S.t=1;render()}}
-function onPump(){if(ON.pump||!ON.q.length)return;ON.pump=true;const r=ON.q.shift();if(r.ply!=ON.ply||S.over!=null){ON.pump=false;return onPump()}ON.ply++;const a=toLoc(fromTxt(r.action));
+function onAutoPass(){if(mode!=5||S.over!=null||S.t!=0||busy||ON.pump)return;if(!moves(S,0).length&&S.w[0]==0){ON.ply++;ON.ver++;ON.sub++;rpc("submit_move",{p_match:ON.mid,p_action:"p,0,0"}).then(()=>{ON.sub=Math.max(0,ON.sub-1)}).catch(()=>{ON.sub=Math.max(0,ON.sub-1);onPull(true)});S.t=1;render()}}
+function onPump(){if(ON.pump||!ON.q.length)return;ON.pump=true;const r=ON.q.shift();if(r.ply!=ON.ply||S.over!=null){ON.pump=false;if(r.ply>ON.ply)onPull(true);return onPump()}ON.ply++;ON.ver++;const ep=ON.ep;const a=toLoc(fromTxt(r.action));
 if(a.p){ON.pump=false;S.t=0;render();onAutoPass();return onPump()}
-busy=true;S.t=1;doAct(1,a,()=>{busy=false;ON.pump=false;if(isBl())clk[1]+=2;if(S.over!=null)return;if(finish())return;S.t=0;render();onAutoPass();onPump()})}
-function onHuman(a){if(S.over!=null||S.t!=0||busy||ON.pump)return;turns++;hint=null;busy=true;ON.ply++;
-rpc("submit_move",{p_match:ON.mid,p_action:toTxt(toLoc(a))}).catch(e=>{bub("m",e.net?ot("err"):ot("bad"));ON.ply=Math.max(0,ON.ply-1);onPull(true)});
-doAct(0,a,()=>{if(a.w){prof.walls++;save("prof2",prof)}if(S.over!=null)return;if(finish())return;if(isBl())clk[0]+=2;busy=false;S.t=1;render()})}
+busy=true;S.t=1;doAct(1,a,()=>{if(ep!=ON.ep)return;busy=false;ON.pump=false;if(isBl())clk[1]+=2;if(S.over!=null)return;if(finish())return;S.t=0;render();onAutoPass();onPump()})}
+function onHuman(a){if(S.over!=null||S.t!=0||busy||ON.pump)return;turns++;hint=null;busy=true;ON.ply++;ON.ver++;ON.sub++;const ep=ON.ep;
+rpc("submit_move",{p_match:ON.mid,p_action:toTxt(toLoc(a))}).then(()=>{ON.sub=Math.max(0,ON.sub-1)}).catch(e=>{ON.sub=Math.max(0,ON.sub-1);bub("m",e.net?ot("err"):ot("bad"));onPull(true)});
+doAct(0,a,()=>{if(ep!=ON.ep)return;if(a.w){prof.walls++;save("prof2",prof)}if(S.over!=null)return;if(finish())return;if(isBl())clk[0]+=2;busy=false;S.t=1;render()})}
 function onSay(i){if(ON.mid)rpc("send_chat",{p_match:ON.mid,p_i:i}).catch(()=>{})}
 function leaveNow(){const m=ON.mid;if(m)rpc("resign",{p_match:m}).catch(()=>{});save("bqm",null);S.over=1;menu()}
 function onResign(){if(S.over!=null)return;if(ON.mid)rpc("resign",{p_match:ON.mid}).catch(()=>{});endGame(1,"res")}
