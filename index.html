@@ -20,7 +20,7 @@ button:active:not(:disabled){background:linear-gradient(#2a1e17,#1a120d)}
 .hm:before{content:"";position:absolute;left:-20%;right:-20%;top:14%;height:46%;background:radial-gradient(closest-side,rgba(232,199,106,.22),transparent);pointer-events:none}
 .ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}.ic.big{width:30px;height:30px}.ic.ch{width:18px;height:18px;opacity:.9}
 .tp{display:flex;gap:10px;align-items:stretch;flex:none}
-.pl{flex:1;min-width:0;display:flex;align-items:center;gap:10px;cursor:pointer}
+.mpl{flex:1;min-width:0;display:flex;align-items:center;gap:10px;cursor:pointer}
 .av{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:700 22px Cinzel,serif;color:#e8c76a;background:radial-gradient(circle at 35% 30%,#4a3624,#1a120d);border:2px solid #d4af6a;box-shadow:0 0 0 2px #0a0706,0 0 12px rgba(212,175,106,.4);flex:none}
 .pi{flex:1;min-width:0}.hn{font:700 15px Cinzel,serif;letter-spacing:.5px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv{font:600 13px "Cormorant Garamond",serif;color:#cbbd9b;margin:1px 0 3px}
 .xp{display:block;position:relative;height:13px;background:#0f0a07;border:1px solid #6b5233;border-radius:7px;overflow:hidden}.xp b{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#b8862b,#f1cf7a);transition:width 1s}.xp span{position:relative;display:block;text-align:center;font:700 9px/11px Cinzel,serif;letter-spacing:.5px;color:#fff3d4;text-shadow:0 1px 2px #000}.xp.mini{height:7px;margin-top:3px}
@@ -55,12 +55,12 @@ dialog .mc{display:flex;align-items:center;gap:12px;text-align:left;padding:11px
 #menu .row{display:flex;gap:8px}#menu .row button{flex:1;padding:11px 2px;font-size:10.5px;text-transform:uppercase;letter-spacing:1px}.glow{box-shadow:0 0 0 1px var(--g),0 0 14px rgba(212,175,106,.5)!important}
 .top{display:flex;align-items:center;height:46px}.top b{flex:1;text-align:center;font:700 20px "Cinzel",Georgia,serif;letter-spacing:5px;margin-right:36px;color:var(--g)}
 .top button{background:none;border:0;box-shadow:none;font-size:34px;width:36px;padding:0;color:var(--g);line-height:1}
-#game{overflow-y:auto}#game>*{flex-shrink:0}
+#game{overflow:hidden}#game>*{flex-shrink:0}
 .pl{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 0}.who{display:flex;align-items:center;gap:10px;font:600 16px "Cinzel",Georgia,serif;letter-spacing:1px}.who i{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#6a2a33,#2a0f14);border:1.5px solid var(--gold);display:grid;place-items:center;font:700 17px "Cinzel",serif;font-style:normal}.who span{color:var(--mu);font:600 16px "Cormorant Garamond",serif;letter-spacing:0}
 .sg{display:flex;gap:4px}.sg i{width:11px;height:24px;border-radius:2px;background:#241b16;border:1px solid #4a3a2c}.sg.o i.f{background:linear-gradient(#d9667a,#8e2434);border-color:#5a1420}.sg.m i.f{background:linear-gradient(#f0d896,#b8924a);border-color:#7a5d28}
 #bw{width:100%;max-width:min(100%,50vh);margin:0 auto;aspect-ratio:1;border:3px solid var(--gold);border-radius:6px;overflow:hidden;background:var(--pn);box-shadow:0 0 0 2px #0a0706,0 10px 24px rgba(0,0,0,.7)}#sv{width:100%;height:100%;display:block;touch-action:none}
 .nw{animation:pop .3s ease-out;transform-box:fill-box;transform-origin:center}@keyframes pop{from{opacity:0;transform:scale(1.6)}to{opacity:1;transform:scale(1)}}
-#tut{display:none;border-left:3px solid var(--gold);background:rgba(0,0,0,.4);padding:8px 12px;margin:10px 0 0;font-size:17px;border-radius:4px;line-height:1.25}#tut button{margin-top:8px;padding:8px 18px;font-size:12px;text-transform:uppercase}
+#tut{display:none;border-left:3px solid var(--gold);background:rgba(0,0,0,.4);padding:8px 12px;margin:2px 0 4px;font-size:clamp(14px,2.2vh,17px);border-radius:4px;line-height:1.2}#tut button{margin-top:6px;padding:7px 18px;font-size:12px;text-transform:uppercase}
 #play{display:flex;flex-direction:column;flex:1;min-height:0}
 #ck{display:none;justify-content:space-between;font:600 14px "Cinzel",serif;letter-spacing:1px;color:var(--mu);margin-top:10px}#ck .lo{color:#ff8a80}
 .inf{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}.inf div:first-child{font-size:18px;color:var(--tx)}.inf span{color:var(--mu);text-align:right;font-size:15px;font-style:italic}
@@ -98,7 +98,7 @@ dialog{border:1px solid var(--gold);border-radius:10px;padding:22px 20px;backgro
 <symbol id="i-ch" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
 </defs></svg>
 <div class="tp">
-<div class="pl" id="hd"><div class="av" id="av">?</div><div class="pi"><div class="hn" id="hn2"></div><div class="lv" id="lv"></div><div class="xp"><b id="xpb"></b><span id="xpt"></span></div></div></div>
+<div class="mpl" id="hd"><div class="av" id="av">?</div><div class="pi"><div class="hn" id="hn2"></div><div class="lv" id="lv"></div><div class="xp"><b id="xpb"></b><span id="xpt"></span></div></div></div>
 <button class="rkc" id="rkc"><svg class="ic"><use href="#i-tr"/></svg><span><b id="rkn"></b><small id="rkl"></small></span><svg class="ic ch"><use href="#i-ch"/></svg></button>
 </div>
 <div class="lg"><svg class="cr" viewBox="0 0 24 14"><path d="M1 13L3 3l5 5 4-7 4 7 5-5 2 10z" fill="#e8c76a" stroke="#8a6a2a" stroke-width=".8"/></svg><h1>BLOQUEIO</h1><div class="tag" data-i="tag"></div></div>
@@ -127,9 +127,9 @@ dialog{border:1px solid var(--gold);border-radius:10px;padding:22px 20px;backgro
 <div class="sc" id="hist"><div class="top"><button id="hb">‹</button><b data-i="mh"></b></div><div id="hl"></div></div>
 <div class="sc" id="game">
 <div class="top"><button id="bk">‹</button><b>BLOQUEIO</b></div>
+<div id="tut"></div>
 <div class="pl"><div class="who"><i id="oi">C</i><div id="on"></div></div><div class="sg o" id="ow"></div></div>
 <div id="bw"><svg id="sv" viewBox="0 0 99 99"><defs><radialGradient id="gg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff3d4"/><stop offset="1" stop-color="#a8864a"/></radialGradient><radialGradient id="gr" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d9667a"/><stop offset="1" stop-color="#7a1424"/></radialGradient></defs></svg></div>
-<div id="tut"></div>
 <div id="play"><div id="ck"><span id="c0"></span><span id="c1"></span></div>
 <div class="inf"><div><div class="sg m" id="mw"></div><div id="mc" style="margin-top:6px;color:var(--mu);font-size:18px"></div></div><span id="ms"></span></div>
 <div class="wb"><button id="wh"><div class="bar"></div></button><button id="wv"><div class="bar v"></div></button></div>
@@ -449,15 +449,23 @@ if(err){const fl=ld("gflow",null);save("gflow",null);if(/identity_already_exists
 setTimeout(()=>onDlg(`<b>${ot("acct")}</b><p>${ot("gErr")}</p><button onclick="dl.close()">${ot("back")}</button>`),400);return}
 try{const user=await api("/auth/v1/user",{auth:false,headers:{Authorization:"Bearer "+tok}});auSet({access_token:tok,refresh_token:q.get("refresh_token"),expires_in:+q.get("expires_in")||3600,user});save("gflow",null);ON.elo=null;await onElo();menuRt();onPos();setTimeout(openAcct,300)}
 catch(e){setTimeout(()=>onDlg(`<b>${ot("acct")}</b><p>${ot("gErr")}</p><button onclick="dl.close()">${ot("back")}</button>`),400)}}
+let _fk="";
+function fitBoard(){try{fitBoard2()}catch(e){}}
+function fitBoard2(){const g=$("game");if(!g||!g.classList||!g.classList.contains("on"))return;const bw=$("bw");const k=innerWidth+"x"+innerHeight+"|"+$("tut").innerHTML.length+"|"+mode+"|"+(RP?1:0)+"|"+$("tut").style.display;if(k==_fk)return;_fk=k;
+bw.style.width="100px";const pl=$("play");pl.style.flex="none";const cs=getComputedStyle(g);let used=0;for(const c of g.children){if(c===bw||c.offsetParent===null&&getComputedStyle(c).position!="fixed"&&c.offsetHeight==0)continue;const x=getComputedStyle(c);used+=c.offsetHeight+parseFloat(x.marginTop)+parseFloat(x.marginBottom)}
+const aH=g.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-used-4,aW=g.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);pl.style.flex="";bw.style.maxWidth="none";bw.style.width=Math.max(150,Math.min(aW,aH))+"px"}
+{const _r=render;render=function(){_r.apply(this,arguments);fitBoard()}}
+if(typeof addEventListener=="function")addEventListener("resize",()=>{_fk="";fitBoard()});
+function launchTut(){if(!prof.tut&&!prof.games&&!ON.mid&&mode!=0){newGame(0);_fk="";setTimeout(fitBoard,60)}}
 function splashRun(){const o=$("spl");if(!o)return;const back=/access_token|error/.test(location.hash+location.search);if(back)save("welcomed",true);
-const done=()=>{o.classList.add("out");setTimeout(()=>{try{o.remove()}catch(e){}},600)};
+const done=(nt)=>{o.classList.add("out");setTimeout(()=>{try{o.remove()}catch(e){}},600);if(!nt)launchTut()};
 const need=!ld("welcomed",false)&&AU.anon;
 setTimeout(()=>{if(!need)return done();$("ldb").style.display="none";$("swl").style.display="flex";
 $("swn").textContent=ot("wN");$("swgt").textContent=ot("gBtn");$("swvt").textContent=ot("wV");$("swe").textContent=ot("wE");
 if(NATIVE)$("swg").style.display="none";
 $("swg").onclick=()=>{save("welcomed",true);acctGoogle()};
 $("swv").onclick=()=>{save("welcomed",true);done()};
-$("swe").onclick=()=>{save("welcomed",true);done();acctForm("login")}},back?600:1800)}
+$("swe").onclick=()=>{save("welcomed",true);done(1);acctForm("login")}},back?600:1800)}
 function acctLogout(){auClear();menuRt();dl.close()}
 function acctDelAsk(){onDlg(`<b>${ot("del")}</b><p>${ot("delq")}</p><button onclick="acctDel()">${ot("delY")}</button><button onclick="openAcct()">${ot("cancel")}</button>`)}
 async function acctDel(){try{await rpc("delete_my_account");auClear();save("bqm",null);menuRt();onDlg(`<b>${ot("bye")}</b><button onclick="dl.close()">${ot("back")}</button>`)}catch(e){onFail(e,"acctDelAsk()")}}
