@@ -377,7 +377,15 @@ function aiMove(){if(S.over!=null)return;const b=aiPick();const nxt=()=>{busy=fa
 if(!moves(S,0).length&&S.w[0]==0){bub("m",T("nomoves"));S.t=1;busy=true;render();setTimeout(aiMove,900);return}render()};
 if(b){if(b.m)aiHist.push(K(b.m[0],b.m[1]));rec.push(enc(1,b));doAct(1,b,nxt)}else nxt()}
 function finish(){if(S.over!=null)return true;const w=S.t;if(S.p[w][0]==GR(w)){endGame(w);return true}return false}
-function endGame(w,why){if(S.over!=null)return;S.over=w;busy=true;const me=w==0;
+let PROMO=null;
+function promoNote(me){if(mode==0)return;const p=prof.promo=prof.promo||{ws:0,since:9,last:0};p.since++;p.ws=me?p.ws+1:0;let k=null;
+if(Date.now()-p.last>150000&&p.since>=2){if(!me&&Math.random()<.75)k="lose";else if(me&&(p.ws==2||p.ws==3))k="win";else if(Math.random()<.12)k="rand"}
+PROMO=k;save("prof2",prof)}
+function promoShow(){const k=PROMO;PROMO=null;if(!k||dl.open)return;const p=prof.promo;p.last=Date.now();p.since=0;save("prof2",prof);
+const orbs=CAT.filter(x=>x.k=="orb"&&x.req&&!cosOwn(x)&&x.pr);let useOrb=orbs.length&&(k=="win"||(k=="rand"&&Math.random()<.5));
+if(useOrb){const o=orbs[Math.floor(Math.random()*orbs.length)];onDlg(`<b>${k=="win"?L3("Você está imbatível!|You're on fire!|¡Estás imparable!"):L3("Bolinha especial|Special orb|Bolita especial")}</b><div style="display:flex;justify-content:center;margin:8px 0">${cosPrev(o,96)}</div><p>${esc(L3(o.n))} — ${L3("mostre seu estilo no tabuleiro.|show your style on the board.|muestra tu estilo en el tablero.")}</p><button onclick="dl.close();openShop('bolas')">${L3("Ver bolinhas|See orbs|Ver bolitas")}</button><button onclick="dl.close()">${L3("Agora não|Not now|Ahora no")}</button>`)}
+else onDlg(`<b>${k=="lose"?L3("Precisa de uma ajuda?|Need a hand?|¿Necesitas ayuda?"):L3("Jogue melhor!|Play smarter!|¡Juega mejor!")}</b><p>${L3("Dica mostra a melhor jogada e Desfazer corrige um erro. Garanta seus pacotes!|Hints show the best move and Undo fixes a mistake. Get your packs!|La pista muestra la mejor jugada y Deshacer corrige un error. ¡Consigue tus paquetes!")}</p><button onclick="dl.close();openShop('dicas')">${L3("Ver pacotes|See packs|Ver paquetes")}</button><button onclick="dl.close()">${L3("Agora não|Not now|Ahora no")}</button>`)}
+function endGame(w,why){if(S.over!=null)return;S.over=w;busy=true;const me=w==0;try{promoNote(me)}catch(e){}
 if(mode==2){const ex=1/(1+Math.pow(10,(opp-rate.elo)/400));rate.elo=Math.max(0,Math.round(rate.elo+32*((me?1:0)-ex)));me?rate.w++:rate.l++;save("rk2",rate)}
 if(mode==1||mode==2||mode==4||mode==6){prof.games++;if(me){prof.wins++;unlock(0);if(prof.wins>=10)unlock(1);if(curLv()==3)unlock(2)}}
 if(mode==6&&me){const firstC=!prof.cst[CN];cStars=turns<=15?3:turns<=24?2:1;prof.cst[CN]=Math.max(prof.cst[CN]||0,cStars);if(CN>=prof.camp&&CN<CT)prof.camp=CN+1;if(firstC&&CN%10==0){prof.inv.h++;prof.inv.u++;GF=ot("gfC")}}if(mode==0&&me){prof.tut=1;unlock(5)}if(mode==3&&me){const d=prof.daily,k=todayKey(),n=dmoves;dStars=n<=dailyBest?3:n<=dailyBest+8?2:1;d.stars[k]=Math.max(d.stars[k]||0,dStars);if(d.last!=k){prof.inv.h++;GF=ot("gfD");d.streak=d.last==yestKey()?d.streak+1:1;d.last=k}if(d.streak>=3)unlock(4)}save("prof2",prof);
@@ -459,7 +467,6 @@ const CAT=[];(()=>{const add=(k,id,o,req,pr,cat)=>CAT.push({k,id,n:o.n,req,pr,ca
 [["tecno",6],["cyber",10],["holo",14],["robo",18],["cosmica",22]].forEach(([i,v])=>add("orb",i,ORB[i],["lv",v],6.99,"fut"));
 [["cristal","cp",120,8.99],["luz","lv",20,8.99],["vacuo","tr",22500,8.99],["divina","lv",30,8.99],["sombria","cp",200,8.99]].forEach(([i,t,v,p])=>add("orb",i,ORB[i],[t,v],p,"esp"));
 add("brd","def",BRD.def,null,0);[["medieval",10],["ninja",35],["futurista",70],["magico",110],["oriental",150],["espacial",190]].forEach(([i,v])=>add("brd",i,BRD[i],["cp",v],6.99));
-add("trl","none",TRL.none,null,0);[["fogo",7],["estrela",12],["energia",18]].forEach(([i,v])=>add("trl",i,TRL[i],null,0));
 add("frm","none",FRM.none,null,0);[["louros",4],["neon",10],["fogo",14],["gelo",19],["real",24]].forEach(([i,v])=>add("frm",i,FRM[i],null,0));
 add("ttl","none",TTL.none,null,0);[["t1",3],["t2",5],["t3",8],["t4",11],["t5",14],["t6",17],["t7",20],["t8",25],["t9",30]].forEach(([i,v])=>add("ttl",i,TTL[i],["lv",v],1.99))})();
 function cosEq(){if(!prof.eq)prof.eq={};return prof.eq}
@@ -685,12 +692,12 @@ return `<div class="cd${eq?" eq":""}${own?"":" lk2"}${wide?" wide":""}" ${own&&!
 let COLT="orb";
 function setMyOrb(){try{if(AU.uid)rpc("set_my_orb",{p_orb:cosCur("orb")}).catch(()=>{})}catch(e){}}
 function collUse(k,id){cosEq()[k]=id;save("prof2",prof);if(k=="orb")setMyOrb();try{menuRt()}catch(e){}openColl(COLT)}
-function openColl(tab){COLT=tab=tab||COLT||"orb";const T=[["orb","🔮",LB("tab_orb")],["brd","▦",LB("tab_brd")],["fx","✨",LB("tab_fx")],["pf","🏅",LB("tab_pf")]];
+function openColl(tab){COLT=tab=tab||COLT||"orb";const T=[["orb","🔮",LB("tab_orb")],["brd","▦",LB("tab_brd")],["pf","🏅",LB("tab_pf")]];
 const sec=(h,k,f)=>{const a=CAT.filter(x=>x.k==k&&(!f||x.cat==f));return a.length?`<div class="sh2">${LB(h)}</div><div class="cg">${a.map(x=>cosCard(x)).join("")}</div>`:""};
 let b="";
 if(tab=="orb")b=sec("h_free","orb","free")+sec("h_ele","orb","ele")+sec("h_fut","orb","fut")+sec("h_esp","orb","esp");
 else if(tab=="brd")b=sec("h_brd","brd");
-else if(tab=="fx")b=sec("h_trl","trl");else b=sec("h_frm","frm")+sec("h_ttl","ttl");
+else b=sec("h_frm","frm")+sec("h_ttl","ttl");
 onDlg(`<div class="shh">🎨 ${LB("coll")}</div><div class="tabs t5">${T.map(([k,i,t])=>`<button class="${tab==k?"on":""}" onclick="openColl('${k}')"><i>${i}</i>${t}</button>`).join("")}</div><div class="cscroll">${b}</div><p id="shn" style="font-size:13px;color:#ffe6a8;min-height:16px;margin:4px 0 0"></p><p style="font-size:12px;opacity:.75;margin:0">${LB("cTip")}</p><button onclick="dl.close()">${ot("back")}</button>`)}
 function buyItem(id){const e=$("shn");if(e)e.textContent=LB("soon")}
 function addVfx(){const v=cosCur("vic");if(v=="none"||!dl.open||dl.querySelector(".vfx"))return;if(v=="glow"){dl.classList.add("vglow");setTimeout(()=>dl.classList.remove("vglow"),6000);return}
@@ -704,7 +711,7 @@ if(tab=="dicas"){h+=`<p class="shp">${ot("shPitch")}</p>`+PK.map((k,i)=>{const p
 else if(tab=="bolas"){const el=CAT.filter(x=>x.cat=="ele");h+=`<p class="shp">${LB("elT")}</p><div class="elg">${el.map((x,i)=>`<div class="elc" style="--g:${ORB[x.id].glow}">${i==0?`<div class="pkr">${LB("hot")}</div>`:""}<div class="elo">${cosPrev(x,84)}</div><div class="cnm">${esc(L3(x.n))}</div>${cosOwn(x)?`<small class="cok">${LB("have")}</small>`:`<button class="cbuy" onclick="buyItem('orb:${x.id}')">${rs(x.pr)}</button>`}</div>`).join("")}</div>
 <div class="bnd"><div class="pkr">${ot("shSave",40)}</div><div class="bno">${el.map(x=>cosPrev(x,34)).join("")}</div><div class="cnm" style="font-size:16px">${LB("bundle")}</div><small>${LB("bundleS")}</small><button class="pkbuy" onclick="buyItem('orb:pack')">${ot("shBuy")} · R$ 14,99</button></div>
 <div class="sh2">${LB("h_fut")} · ${LB("h_esp")}</div><div class="cg">${CAT.filter(x=>x.cat=="fut"||x.cat=="esp").map(x=>cosCard(x,1)).join("")}</div>`}
-else{const g=(hh,k)=>`<div class="sh2">${LB(hh)}</div><div class="cg">${CAT.filter(x=>x.k==k&&x.req).map(x=>cosCard(x,1)).join("")}</div>`;h+=g("h_brd","brd")+g("h_trl","trl")+g("h_vic","vic")+g("h_frm","frm")+g("h_ttl","ttl")}
+else{const g=(hh,k)=>`<div class="sh2">${LB(hh)}</div><div class="cg">${CAT.filter(x=>x.k==k&&x.req).map(x=>cosCard(x,1)).join("")}</div>`;h+=g("h_brd","brd")+g("h_frm","frm")+g("h_ttl","ttl")}
 onDlg(h.replace('<div class="shh">','<div class="shh">')+`<div class="cscroll" style="display:none"></div><p id="shn" style="font-size:13px;opacity:.9;min-height:18px;color:#ffe6a8"></p><p style="font-size:12px;opacity:.7;margin:0">💡 ${prof.inv.h} · ↩ ${prof.inv.u}</p><button onclick="dl.close()">${ot("back")}</button>`)}
 function shopBuy(id){const e=document.getElementById("shn");if(e)e.textContent=ot("shSoon")}
 /* ---------- campanha ---------- */
@@ -804,7 +811,7 @@ function acctLogout(){auClear();menuRt();dl.close()}
 function acctDelAsk(){onDlg(`<b>${ot("del")}</b><p>${ot("delq")}</p><button onclick="acctDel()">${ot("delY")}</button><button onclick="openAcct()">${ot("cancel")}</button>`)}
 async function acctDel(){try{await rpc("delete_my_account");auClear();save("bqm",null);menuRt();onDlg(`<b>${ot("bye")}</b><button onclick="dl.close()">${ot("back")}</button>`)}catch(e){onFail(e,"acctDelAsk()")}}
 /* --- ligações com o menu do jogo --- */
-const _menu=menu;menu=function(){if(ON.mid)ON.lastMid=ON.mid;onClean();_menu();menuRt();onElo().then(onPos);resumeBtn()};
+const _menu=menu;menu=function(){if(ON.mid)ON.lastMid=ON.mid;onClean();_menu();menuRt();onElo().then(onPos);resumeBtn();if(PROMO)setTimeout(promoShow,900)};
 function resumeBtn(){const m=ld("bqm",null);$("b6").style.display=m?"block":"none";$("b6t").textContent=ot("resume")}
 const _op=openProf;openProf=function(){_op();dl.innerHTML=dl.innerHTML.replace('<button onclick="dl.close()">','<button onclick="openAcct()">'+ot("acct")+'</button><button onclick="dl.close()">')};
 $("bk").onclick=()=>{if(RP)return leave();if(mode==5&&S.over==null){onDlg(`<b>${ot("leave")}</b><button onclick="dl.close();leaveNow()">${ot("leaveY")}</button><button onclick="dl.close()">${ot("stay")}</button>`);return}if(mode==6&&!RP)openCamp();else menu()};
