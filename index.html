@@ -269,25 +269,34 @@ const LV=[{d:1,n:12,e:700},{d:2,n:1.3,e:1000},{d:3,n:.35,e:1300},{d:3,n:0,e:1600
 const rankLv=()=>opp<900?0:opp<1100?1:opp<1400?2:3,curLv=()=>mode==2?rankLv():mode==0?0:mode==3?3:mode==6?(CN>=600?3:CN>=300?2:CN>=100?1:0):lvl;
 const tier=e=>TA("tier")[e<900?0:e<1100?1:e<1300?2:e<1500?3:4];
 /* ---------- som e vibração ---------- */
-let AC;function tone(f,d,ty,v,at){const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;const t=AC.currentTime+(at||0);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}
-let NB=null;function nz(){if(!NB){NB=AC.createBuffer(1,AC.sampleRate*.2,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}return NB}
-function burst(f,q,d,v,ty,at){const s=AC.createBufferSource();s.buffer=nz();const b=AC.createBiquadFilter();b.type=ty||"bandpass";b.frequency.value=f;b.Q.value=q;const g=AC.createGain(),t=AC.currentTime+(at||0);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(b);b.connect(g);g.connect(AC.destination);s.start(t);s.stop(t+d+.02)}
-const rnd=(a)=>a*(1+(Math.random()-.5)*.16);
-const SFX={move:()=>{burst(rnd(1100),1.4,.05,.55);tone(rnd(190),.1,"sine",.22);tone(rnd(420),.04,"triangle",.07)},
-wall:()=>{burst(rnd(1700),.8,.08,.6,"lowpass");tone(rnd(95),.16,"triangle",.3);tone(rnd(260),.05,"square",.05,.01)},
-click:()=>{tone(880,.05,"sine",.07);tone(1320,.06,"sine",.04,.01)},
-ok:()=>{tone(660,.1,"sine",.14);tone(990,.16,"sine",.13,.08)},
-win:()=>{[523,659,784,1046,1318].forEach((f,i)=>{tone(f,.28,"triangle",.15,i*.1);tone(f*2,.2,"sine",.05,i*.1+.02)});[1568,2093,2637].forEach((f,i)=>tone(f,.25,"sine",.04,.5+i*.08));burst(6000,.6,.4,.07,"highpass",.5)},
-lose:()=>{[392,330,262,196].forEach((f,i)=>tone(f,.34,"sine",.13,i*.17))}};
-const MUSC={def:[196,[0,3,5,7,10],"triangle"],medieval:[146.8,[0,2,3,5,7,9,10],"triangle"],ninja:[174.6,[0,3,5,7,10],"sine"],futurista:[130.8,[0,3,7,10,12,15],"square"],magico:[155.6,[0,2,4,6,7,9,11],"sine"],oriental:[164.8,[0,2,4,7,9],"sine"],espacial:[110,[0,2,7,9,14],"sine"]};
-let MT=null,MB=0;
-function musTick(){if(!cfg.mus||!cfg.snd||document.hidden||!AC||AC.state!="running")return;const m=MUSC[cosCur("brd")]||MUSC.def,[r,sc,ty]=m;MB++;
-const st=(i,o)=>r*Math.pow(2,(sc[i%sc.length]+12*(o+Math.floor(i/sc.length)))/12);
-if(MB%8==1){tone(r/2,3.6,"sine",.03);tone(r*Math.pow(2,sc[2%sc.length]/12)/2,3.6,"sine",.018)}
-if(MB%4==1)tone(r,.9,"triangle",.035);
-if(Math.random()<.65){const i=Math.floor(Math.random()*sc.length*2);tone(st(i,1),ty=="square"?.2:.7,ty,ty=="square"?.012:.03)}
-if(Math.random()<.2){const i=Math.floor(Math.random()*sc.length);tone(st(i,2),1.2,"sine",.015)}}
-function musSync(){const on=cfg.mus&&cfg.snd;if(on&&!MT){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=="suspended")AC.resume();MT=setInterval(musTick,520)}catch(e){}}else if(!on&&MT){clearInterval(MT);MT=null}}
+let AC;
+let OUT=null,MG=null,NB=null;
+function bus(){if(OUT)return OUT;OUT=AC.createGain();OUT.gain.value=1;const cv=AC.createConvolver(),len=AC.sampleRate*1.8,ir=AC.createBuffer(2,len,AC.sampleRate);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}cv.buffer=ir;const w=AC.createGain();w.gain.value=.28;OUT.connect(AC.destination);OUT.connect(cv);cv.connect(w);w.connect(AC.destination);MG=AC.createGain();MG.gain.value=.9;MG.connect(OUT);return OUT}
+function tone(f,d,ty,v,at,dst){bus();const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;const t=AC.currentTime+(at||0);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(dst||OUT);o.start(t);o.stop(t+d+.02)}
+function nz(){if(!NB){NB=AC.createBuffer(1,AC.sampleRate*.3,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}return NB}
+function burst(f,q,d,v,ty,at,dst){bus();const s=AC.createBufferSource();s.buffer=nz();const b=AC.createBiquadFilter();b.type=ty||"bandpass";b.frequency.value=f;b.Q.value=q;const g=AC.createGain(),t=AC.currentTime+(at||0);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(b);b.connect(g);g.connect(dst||OUT);s.start(t);s.stop(t+d+.02)}
+function pluck(f,t,d,v,dst,br){bus();const o=AC.createOscillator(),o2=AC.createOscillator(),fl=AC.createBiquadFilter(),g=AC.createGain();o.type="triangle";o2.type="sine";o.frequency.value=f;o2.frequency.value=f*(br?3:2);fl.type="lowpass";fl.frequency.setValueAtTime(f*8,t);fl.frequency.exponentialRampToValueAtTime(f*1.5,t+d);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(fl);o2.connect(fl);fl.connect(g);g.connect(dst);o.start(t);o2.start(t);o.stop(t+d+.05);o2.stop(t+d+.05)}
+function padn(f,t,d,v,dst){bus();const fl=AC.createBiquadFilter(),g=AC.createGain();fl.type="lowpass";fl.frequency.value=900;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+d*.35);g.gain.linearRampToValueAtTime(.0001,t+d);[-6,6].forEach(c=>{const o=AC.createOscillator();o.type="sawtooth";o.frequency.value=f;o.detune.value=c;o.connect(fl);o.start(t);o.stop(t+d+.05)});fl.connect(g);g.connect(dst)}
+const rnd=a=>a*(1+(Math.random()-.5)*.1);
+const SFX={move:()=>{burst(rnd(900),1.6,.045,.5);tone(rnd(165),.12,"sine",.3);tone(rnd(330),.06,"triangle",.1);tone(rnd(1320),.12,"sine",.035,.03)},
+wall:()=>{burst(rnd(1500),.7,.09,.65,"lowpass");tone(rnd(80),.22,"sine",.42);tone(rnd(130),.14,"triangle",.2);burst(3200,2,.04,.18,"bandpass",.02);tone(rnd(520),.05,"square",.035,.015)},
+click:()=>{tone(1040,.05,"sine",.08);tone(1560,.07,"sine",.04,.012)},
+ok:()=>{tone(784,.12,"sine",.13);tone(1175,.2,"sine",.12,.08);tone(1568,.24,"sine",.05,.14)},
+win:()=>{[[523,0],[659,.1],[784,.2],[1046,.3]].forEach(([f,a])=>{tone(f,.5,"triangle",.14,a);tone(f*2,.4,"sine",.05,a)});[523,659,784,1046].forEach(f=>tone(f,.9,"sine",.07,.42));[1568,2093,2637,3136].forEach((f,i)=>tone(f,.3,"sine",.045,.5+i*.07));burst(7000,.5,.5,.05,"highpass",.45)},
+lose:()=>{[[330,0],[294,.2],[247,.4],[196,.62]].forEach(([f,a])=>{tone(f,.45,"triangle",.1,a);tone(f/2,.5,"sine",.1,a)})}};
+const SC5={maj:[0,2,4,7,9],min:[0,3,5,7,10],dor:[0,2,3,5,7,9,10],lyd:[0,2,4,6,7,9,11]};
+const MUSC={def:{r:146.8,sc:SC5.dor,bpm:84,inst:"pl",hat:0},medieval:{r:146.8,sc:SC5.dor,bpm:82,inst:"pl",hat:0},ninja:{r:164.8,sc:SC5.min,bpm:94,inst:"pl",hat:1},futurista:{r:130.8,sc:SC5.min,bpm:112,inst:"sy",hat:1,kick:1},magico:{r:155.6,sc:SC5.lyd,bpm:76,inst:"bl",hat:0},oriental:{r:164.8,sc:SC5.maj,bpm:78,inst:"pl",hat:0},espacial:{r:110,sc:SC5.dor,bpm:68,inst:"bl",hat:0,pad:1}};
+const MEL=[2,-1,3,-1,4,3,2,-1, 0,-1,2,-1,3,2,0,-1, 2,-1,3,-1,5,4,3,-1, 4,3,2,-1,0,-1,-1,-1],PRG=[[0,0],[8,1],[3,1],[10,1]];
+let MT=null,MS=0,MN=0;
+function musSched(){if(!cfg.mus||!cfg.snd||document.hidden||!AC||AC.state!="running")return;bus();const m=MUSC[cosCur("brd")]||MUSC.def,sd=60/m.bpm/2,sc=m.sc;if(!MN||MN<AC.currentTime-1)MN=AC.currentTime+.1;
+while(MN<AC.currentTime+.35){const st=MS%32,bar=Math.floor(st/8),sb=st%8,[ro,mj]=PRG[bar],cr=m.r*Math.pow(2,ro/12),fq=(deg,oc)=>m.r*Math.pow(2,(sc[((deg%sc.length)+sc.length)%sc.length]+12*(oc+Math.floor(deg/sc.length)))/12);
+if(sb==0){[0,mj?4:3,7].forEach((x,i)=>{if(m.pad||m.inst=="bl")padn(cr*Math.pow(2,x/12),MN,sd*8,.012,MG);else pluck(cr*Math.pow(2,x/12),MN+i*sd*.25,sd*5,.02,MG)});tone(cr/2,sd*3,"sine",.07,MN-AC.currentTime,MG)}
+if(sb==4)tone(cr/2,sd*3,"sine",.05,MN-AC.currentTime,MG);
+const d=MEL[st];if(d>=0){const f=fq(d,1);if(m.inst=="bl"){tone(f*2,sd*5,"sine",.035,MN-AC.currentTime,MG);tone(f*4,sd*3,"sine",.012,MN-AC.currentTime,MG)}else if(m.inst=="sy"){tone(f,sd*1.6,"square",.014,MN-AC.currentTime,MG)}else pluck(f,MN,sd*3.2,.05,MG)}
+if(m.hat&&sb%2==1)burst(8000,.5,.04,.012,"highpass",MN-AC.currentTime,MG);
+if(m.kick&&sb%4==0){tone(110,.12,"sine",.12,MN-AC.currentTime,MG)}
+MN+=sd;MS++}}
+function musSync(){const on=cfg.mus&&cfg.snd;if(on&&!MT){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=="suspended")AC.resume();MT=setInterval(musSched,120)}catch(e){}}else if(!on&&MT){clearInterval(MT);MT=null}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&AC&&AC.state=="suspended")AC.resume()});
 let AUD=null;function audUnlock(){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!="running")AC.resume();if(!AUD){AUD=new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=");AUD.loop=true;AUD.setAttribute("playsinline","");AUD.play().catch(()=>{AUD=null})}const o=AC.createOscillator(),g=AC.createGain();g.gain.value=.0001;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.05)}catch(e){}}
 ["pointerdown","touchend","click"].forEach(ev=>document.addEventListener(ev,()=>{audUnlock();musSync()},{capture:true,passive:true}));
