@@ -301,16 +301,19 @@ ok:()=>{tone(784,.12,"sine",.13);tone(1175,.2,"sine",.12,.08);tone(1568,.24,"sin
 win:()=>{[[523,0],[659,.1],[784,.2],[1046,.3]].forEach(([f,a])=>{tone(f,.5,"triangle",.14,a);tone(f*2,.4,"sine",.05,a)});[523,659,784,1046].forEach(f=>tone(f,.9,"sine",.07,.42));[1568,2093,2637,3136].forEach((f,i)=>tone(f,.3,"sine",.045,.5+i*.07));burst(7000,.5,.5,.05,"highpass",.45)},
 lose:()=>{[[330,0],[294,.2],[247,.4],[196,.62]].forEach(([f,a])=>{tone(f,.45,"triangle",.1,a);tone(f/2,.5,"sine",.1,a)})}};
 const SC5={maj:[0,2,4,7,9],min:[0,3,5,7,10],dor:[0,2,3,5,7,9,10],lyd:[0,2,4,6,7,9,11]};
-const MUSC={def:{r:146.8,sc:SC5.dor,bpm:84,inst:"pl",hat:0},medieval:{r:146.8,sc:SC5.dor,bpm:82,inst:"pl",hat:0},ninja:{r:164.8,sc:SC5.min,bpm:94,inst:"pl",hat:1},futurista:{r:130.8,sc:SC5.min,bpm:112,inst:"sy",hat:1,kick:1},magico:{r:155.6,sc:SC5.lyd,bpm:76,inst:"bl",hat:0},oriental:{r:164.8,sc:SC5.maj,bpm:78,inst:"pl",hat:0},espacial:{r:110,sc:SC5.dor,bpm:68,inst:"bl",hat:0,pad:1}};
-const MEL=[2,-1,3,-1,4,3,2,-1, 0,-1,2,-1,3,2,0,-1, 2,-1,3,-1,5,4,3,-1, 4,3,2,-1,0,-1,-1,-1],PRG=[[0,0],[8,1],[3,1],[10,1]];
+const MUSC={def:{r:130.8,sc:SC5.maj,bpm:124,inst:"pl",kick:1},medieval:{r:146.8,sc:SC5.maj,bpm:116,inst:"pl",kick:1},ninja:{r:164.8,sc:SC5.maj,bpm:132,inst:"pl",kick:1},futurista:{r:130.8,sc:SC5.maj,bpm:128,inst:"sy",kick:1},magico:{r:155.6,sc:SC5.maj,bpm:120,inst:"bl",kick:1},oriental:{r:174.6,sc:SC5.maj,bpm:118,inst:"pl",kick:1},espacial:{r:123.5,sc:SC5.maj,bpm:126,inst:"bl",kick:1}};
+const MEL=[2,-1,4,5, 4,-1,2,0, 1,-1,2,4, 2,-1,1,-1, 2,-1,4,5, 7,-1,5,4, 5,4,2,-1, 4,2,1,0],PRG=[[0,1],[7,1],[9,0],[5,1]];
 let MT=null,MS=0,MN=0;
 function musSched(){if(!cfg.mus||!cfg.snd||document.hidden||!AC||AC.state!="running")return;bus();const m=MUSC[cosCur("brd")]||MUSC.def,sd=60/m.bpm/2,sc=m.sc;if(!MN||MN<AC.currentTime-1)MN=AC.currentTime+.1;
-while(MN<AC.currentTime+.35){const st=MS%32,bar=Math.floor(st/8),sb=st%8,[ro,mj]=PRG[bar],cr=m.r*Math.pow(2,ro/12),fq=(deg,oc)=>m.r*Math.pow(2,(sc[((deg%sc.length)+sc.length)%sc.length]+12*(oc+Math.floor(deg/sc.length)))/12);
-if(sb==0){[0,mj?4:3,7].forEach((x,i)=>{if(m.pad||m.inst=="bl")padn(cr*Math.pow(2,x/12),MN,sd*8,.012,MG);else pluck(cr*Math.pow(2,x/12),MN+i*sd*.25,sd*5,.02,MG)});tone(cr/2,sd*3,"sine",.07,MN-AC.currentTime,MG)}
-if(sb==4)tone(cr/2,sd*3,"sine",.05,MN-AC.currentTime,MG);
-const d=MEL[st];if(d>=0){const f=fq(d,1);if(m.inst=="bl"){tone(f*2,sd*5,"sine",.035,MN-AC.currentTime,MG);tone(f*4,sd*3,"sine",.012,MN-AC.currentTime,MG)}else if(m.inst=="sy"){tone(f,sd*1.6,"square",.014,MN-AC.currentTime,MG)}else pluck(f,MN,sd*3.2,.05,MG)}
-if(m.hat&&sb%2==1)burst(8000,.5,.04,.012,"highpass",MN-AC.currentTime,MG);
-if(m.kick&&sb%4==0){tone(110,.12,"sine",.12,MN-AC.currentTime,MG)}
+while(MN<AC.currentTime+.35){const st=MS%32,bar=Math.floor(st/8),sb=st%8,[ro,mj]=PRG[bar],cr=m.r*Math.pow(2,ro/12),at=MN-AC.currentTime,fq=(deg,oc)=>m.r*Math.pow(2,(sc[((deg%sc.length)+sc.length)%sc.length]+12*(oc+Math.floor(deg/sc.length)))/12);
+const ch=[0,mj?4:3,7];
+if(sb==0)ch.forEach((x,i)=>pluck(cr*2*Math.pow(2,x/12),MN+i*.012,sd*3,.022,MG));
+if(sb==3||sb==6)ch.forEach(x=>pluck(cr*2*Math.pow(2,x/12),MN,sd*1.3,.014,MG));
+if(sb==0)tone(cr/2,sd*3,"sine",.1,at,MG);if(sb==3)tone(cr,sd*1.5,"sine",.06,at,MG);if(sb==4)tone(cr*Math.pow(2,7/12)/2,sd*3,"sine",.09,at,MG);if(sb==7)tone(cr/2,sd*1.5,"sine",.06,at,MG);
+const d=MEL[st];if(d>=0){const f=fq(d,1);if(m.inst=="bl"){tone(f*2,sd*2.5,"sine",.05,at,MG);tone(f*4,sd*1.5,"sine",.018,at,MG)}else if(m.inst=="sy"){tone(f,sd*1.8,"square",.02,at,MG);tone(f*2,sd*1.2,"sine",.015,at,MG)}else pluck(f,MN,sd*2.4,.07,MG,1)}
+if(sb%2==1)burst(8500,.5,.04,.016,"highpass",at,MG);
+if(sb==0||sb==4)tone(120,.13,"sine",.2,at,MG);
+if(sb==2||sb==6)burst(1900,.8,.09,.05,"bandpass",at,MG);
 MN+=sd;MS++}}
 function musSync(){const on=cfg.mus&&cfg.snd;if(on&&!MT){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=="suspended")AC.resume();MT=setInterval(musSched,120)}catch(e){}}else if(!on&&MT){clearInterval(MT);MT=null}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&AC&&AC.state=="suspended")AC.resume()});
