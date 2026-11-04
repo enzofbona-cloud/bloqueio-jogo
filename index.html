@@ -1508,4 +1508,34 @@ try{dl.addEventListener("close",()=>setTimeout(()=>{try{if(PROMO&&!dl.open&&S.ov
 </script><script>
 /* limpa os modos visuais da janela ao fechar (baú, loja, coleção, promo) */
 try{dl.addEventListener("close",()=>{if(!dl.open)dl.classList.remove("chfs","coinshop","coltabs","collfs","shfs","rwd","promo","vglow")})}catch(e){}
+</script><style>
+.cd .cpv{display:block;margin:6px auto 0;padding:5px 12px!important;min-width:0!important;width:auto!important;font:700 11px Cinzel,serif!important;letter-spacing:1.5px!important;color:#ffe6a8!important;background:linear-gradient(#3a2614,#1a0f07)!important;border:1.5px solid #d4a64a!important;border-radius:14px!important;box-shadow:0 0 8px #ffb52a44!important;cursor:pointer}
+.cd .cpv:active{transform:scale(.96)}
+#game.pvw .nv,#game.pvw #bw,#game.pvw .sb,#game.pvw #tut{pointer-events:none}
+#game.pvw .nv{opacity:.35}#game.pvw #bk,#game.pvw #hb{visibility:hidden;pointer-events:none}
+#pvtop{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;transform:translateX(-50%);z-index:60;padding:6px 16px;border-radius:16px;border:1.5px solid #e9b84f;background:linear-gradient(#3d1446,#1e0824);font:700 12px Cinzel,serif;letter-spacing:3px;color:#f5e6c4;box-shadow:0 0 14px #ffb52a55;white-space:nowrap;pointer-events:none}
+#pvbar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 10px);transform:translateX(-50%);width:min(94vw,440px);z-index:60;box-sizing:border-box;padding:12px 12px 12px;border-radius:16px;border:2px solid #e9b84f;background:linear-gradient(#2a1a0e,#120a05);box-shadow:0 0 0 3px #0a0604,0 0 26px #ffb52a55;text-align:center}
+#pvbar b{display:block;font:700 20px Cinzel,serif;color:#ffd77a;letter-spacing:1px;margin-bottom:2px}
+#pvbar small{display:block;font:italic 600 15px "Cormorant Garamond",serif;color:#e8dcc0;margin-bottom:10px}
+#pvbar .r{display:flex;gap:10px}#pvbar button{flex:1;margin:0!important;padding:12px 6px!important;font:700 14px Cinzel,serif!important;letter-spacing:1px!important}
+#pvbar button.pvg{color:#2a1406!important;background:linear-gradient(#fff0b0,#f0c050 50%,#c98a24)!important;border:1.5px solid #ffe39a!important}
+</style><script>
+let PVB=null,PVS=null;
+{const _cc=cosCur;cosCur=function(k){return k=="brd"&&PVB?PVB:_cc(k)}}
+{const _cd=cosCard;cosCard=function(it,shop){let h=_cd(it,shop);if(it.k=="brd")h=h.replace(/<\/div>$/,`<button class="cpv" onclick="event.stopPropagation();brdPreview('${it.id}')">👁 ${L3("VISUALIZAR|PREVIEW|VER")}</button></div>`);return h}}
+function brdPreview(id){try{const it=CAT.find(x=>x.k=="brd"&&x.id==id);if(!it)return;
+if(!PVS)PVS={S,mode,busy,turns,lastW,hint,stack,rec,RP,from:window.SHT=="coin"?"coin":(dl.classList.contains("collfs")?"coll":"shop")};
+if(dl.open)dl.close();PVB=id;mode=1;RP=null;turns=1;lastW=null;hint=null;busy=true;
+const g=fresh();g.p=[[6,4],[2,4]];g.t=1;g.H.set("4,3",0);g.H.set("1,4",1);g.V.set("2,5",1);g.V.set("5,2",0);g.H.set("6,6",1);g.w=[8,7];S=g;
+try{$("tut").style.display="none"}catch(e){}
+show("game");$("game").classList.add("pvw");try{$("on").innerHTML=esc(L3(it.n))}catch(e){}render();
+const own=cosOwn(it),eq=own&&PVS&&(()=>{try{return cosEq().brd==id}catch(e){return false}})();
+let act="";if(own)act=eq?`<button class="pvg" disabled>✓ ${L3("EM USO|IN USE|EN USO")}</button>`:`<button class="pvg" onclick="pvUse('${id}')">${L3("USAR ESTE|USE THIS|USAR ESTE")}</button>`;
+else if(it.pr)act=`<button class="pvg" onclick="pvClose();setTimeout(()=>buyItem('brd:${id}'),350)">${L3("COMPRAR|BUY|COMPRAR")} · ${rs(it.pr)}</button>`;
+pvUI(`<div id="pvtop">${L3("PRÉ-VISUALIZAÇÃO|PREVIEW|VISTA PREVIA")}</div><div id="pvbar"><b>${esc(L3(it.n))}</b><small>${own?L3("Você já tem este tabuleiro|You already own this board|Ya tienes este tablero"):esc(cosReq(it))}</small><div class="r"><button onclick="pvClose()">← ${L3("VOLTAR|BACK|VOLVER")}</button>${act}</div></div>`)}catch(e){console.log(e);pvClose()}}
+function pvUI(h){document.querySelectorAll("#pvtop,#pvbar").forEach(e=>e.remove());if(h)document.body.insertAdjacentHTML("beforeend",h)}
+function pvUse(id){try{cosEq().brd=id;save("prof2",prof);menuRt()}catch(e){}pvClose()}
+function pvClose(){pvUI("");PVB=null;$("game").classList.remove("pvw");const p=PVS;PVS=null;
+if(p){S=p.S;mode=p.mode;busy=p.busy;turns=p.turns;lastW=p.lastW;hint=p.hint;stack=p.stack;rec=p.rec;RP=p.RP}
+menu();setTimeout(()=>{if(!p||p.from=="shop")openShop("itens");else if(p.from=="coll")openColl("brd");else openCoinShop()},60)}
 </script></body></html>
