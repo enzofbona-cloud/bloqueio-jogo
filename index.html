@@ -811,7 +811,7 @@ if(b){if(b.m)aiHist.push(K(b.m[0],b.m[1]));rec.push(enc(1,b));doAct(1,b,nxt)}els
 function finish(){if(S.over!=null)return true;const w=S.t;if(S.p[w][0]==GR(w)){endGame(w);return true}return false}
 let PROMO=null;
 function promoNote(me){if(mode==0)return;const p=prof.promo=prof.promo||{ws:0,since:9,last:0};p.since++;p.ws=me?p.ws+1:0;let k=null;
-if(Date.now()-p.last>100000&&p.since>=1){if(!me&&Math.random()<.9)k="lose";else if(me&&(p.ws==2||p.ws==3||p.ws==5))k="win";else if(Math.random()<.2)k="rand"}
+if(Date.now()-p.last>60000&&p.since>=1){if(!me&&Math.random()<.9)k="lose";else if(me&&(p.ws==2||p.ws==3||p.ws==5))k="win";else if(Math.random()<.2)k="rand"}
 PROMO=k;save("prof2",prof)}
 function promoShow(){const k=PROMO;PROMO=null;if(!k||dl.open)return;const p=prof.promo;p.last=Date.now();p.since=0;save("prof2",prof);
 const orbs=CAT.filter(x=>x.k=="orb"&&x.req&&!cosOwn(x)&&x.pr),ele=CAT.filter(x=>x.cat=="ele"&&!cosOwn(x));
@@ -1507,4 +1507,7 @@ const cb=dl.querySelector("button.pmc");if(cb){const L=cb.textContent.trim().len
 dl.querySelectorAll(".pml li").forEach((li,i)=>{li.innerHTML=`<i class="${i?"u":"h"}"></i><span>${li.innerHTML.replace(/^\s*✔\s*/,"")}</span>`});
 const p=dl.querySelector(".pmp");if(p){[...p.childNodes].filter(n=>n.nodeType==3&&n.textContent.trim()).forEach(n=>{const s=document.createElement("span");s.className="pmpv";s.textContent=n.textContent.trim();n.replaceWith(s)});
 const o=p.querySelector(".pmo");if(o){p.classList.add("tg");if(o.textContent.length>5)o.classList.add("sm");o.innerHTML=`<span>${o.innerHTML}</span>`}}}catch(e){console.log(e)}}
+</script><script>
+/* promoção também ao tocar em "Jogar de novo" (não só ao voltar ao menu) */
+try{dl.addEventListener("close",()=>setTimeout(()=>{try{if(PROMO&&!dl.open&&S.over==null&&$("game").classList.contains("on"))promoShow()}catch(e){}},700))}catch(e){}
 </script></body></html>
