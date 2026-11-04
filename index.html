@@ -1566,4 +1566,44 @@ const rest=bs.filter(b=>!share.includes(b)&&!menuB.includes(b)&&!prim.includes(b
 let mb=menuB[0];if(!mb){mb=document.createElement("button");mb.setAttribute("onclick","dl.close();menu()")}
 mb.className=(mb.className+" chmn").trim();mb.textContent=ot("back");
 prim.forEach((b,i)=>{if(i==0)b.className=(b.className+" b-gold").trim()});const p0=prim.slice(0,1),r2=[...prim.slice(1),...rest];return p0.map(b=>b.outerHTML).join("")+mb.outerHTML+share.map(b=>b.outerHTML).join("")}}
+</script><style>
+.adc{display:flex;align-items:center;gap:10px;text-align:left;margin:8px 0 10px;padding:10px 12px;border-radius:12px;border:1.5px solid #c99a3a;background:linear-gradient(90deg,#2a1a0c,#160d07);box-shadow:0 0 12px #ffb52a22}
+.adc i{font-style:normal;font-size:30px;flex:none}.adc div{flex:1;min-width:0}.adc b{display:block;font:700 14px Cinzel,serif;color:#ffe2a0;letter-spacing:.5px}.adc small{display:block;font:600 14px "Cormorant Garamond",serif;color:#e6d9bd;line-height:1.15}
+.adc button{flex:none;margin:0!important;width:auto!important;min-width:0!important;padding:9px 12px!important;font:800 12px Cinzel,serif!important;letter-spacing:.5px!important;border-radius:10px!important}
+.adc button.adv{background:linear-gradient(#3fd27a,#159a4a)!important;border:1px solid #9cf5bf!important;color:#fff!important}
+.adc button.adn{background:linear-gradient(#e8b84a,#a8731c)!important;border:1px solid #ffe08a!important;color:#2a1608!important}
+.adc.nad{border-color:#6a5a3a}.adc.ok b{color:#9cf5bf}
+</style><script>
+/* ===== anúncios (AdMob) — IDs de TESTE do Google até a conta AdMob ficar pronta ===== */
+const ADS={test:true,rw:"ca-app-pub-3940256099942544/5224354917",it:"ca-app-pub-3940256099942544/1033173712",on:false,rr:false,ir:false,pend:false,DAY:5,EVERY:3};
+const ADP=()=>{try{return NATIVE&&window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.AdMob}catch(e){return null}};
+const noAds=()=>!!(prof.buy&&prof.buy["noads:1"]);
+function adDay(){const k=todayKey();if(!prof.adr||prof.adr.k!=k)prof.adr={k,n:0};return prof.adr}
+async function adInit(){const A=ADP();if(!A||ADS.on)return;try{await A.initialize({initializeForTesting:ADS.test});ADS.on=true;
+try{const ci=await A.requestConsentInfo();if(ci&&ci.isConsentFormAvailable&&ci.status=="REQUIRED")await A.showConsentForm()}catch(e){}
+adPrep()}catch(e){}}
+async function adPrep(){const A=ADP();if(!A||!ADS.on)return;if(!ADS.rr)try{await A.prepareRewardVideoAd({adId:ADS.rw,isTesting:ADS.test});ADS.rr=true}catch(e){ADS.rr=false}
+if(!noAds()&&!ADS.ir)try{await A.prepareInterstitial({adId:ADS.it,isTesting:ADS.test});ADS.ir=true}catch(e){ADS.ir=false}}
+function adMsg(t){const e=document.getElementById("shn");if(e&&dl.open)e.textContent=t;else{try{bub("m",t)}catch(x){}}}
+async function adReward(){const A=ADP();if(!A){adMsg(L3("Vídeos disponíveis só no app Android.|Videos are only available in the Android app.|Videos disponibles solo en la app de Android."));return false}
+if(!ADS.on)await adInit();if(!ADS.rr)try{await A.prepareRewardVideoAd({adId:ADS.rw,isTesting:ADS.test});ADS.rr=true}catch(e){adMsg(L3("Nenhum vídeo disponível agora. Tente mais tarde.|No video available right now. Try again later.|No hay videos ahora. Inténtalo más tarde."));return false}
+return await new Promise(res=>{let got=false,done=false,hs=[];const fin=()=>{if(done)return;done=true;hs.forEach(h=>{try{h.remove()}catch(e){}});ADS.rr=false;setTimeout(adPrep,800);res(got)};
+Promise.resolve(A.addListener("onRewardedVideoAdReward",()=>{got=true})).then(h=>hs.push(h));
+Promise.resolve(A.addListener("onRewardedVideoAdDismissed",()=>setTimeout(fin,300))).then(h=>hs.push(h));
+Promise.resolve(A.addListener("onRewardedVideoAdFailedToShow",()=>fin())).then(h=>hs.push(h));
+A.showRewardVideoAd().then(r=>{if(r&&(r.amount!=null||r.type))got=true;setTimeout(fin,1500)}).catch(()=>fin());setTimeout(fin,180000)})}
+async function adWatch(kind){const d=adDay();if(d.n>=ADS.DAY){adMsg(L3("Você já assistiu todos os vídeos de hoje. Volte amanhã!|You've watched all of today's videos. Come back tomorrow!|Ya viste todos los videos de hoy. ¡Vuelve mañana!"));return}
+const ok=await adReward();if(!ok)return;d.n++;
+if(kind=="hu"){prof.inv.h++;prof.inv.u++;save("prof2",prof);adMsg(L3("+1 dica e +1 desfazer!|+1 hint and +1 undo!|¡+1 pista y +1 deshacer!"));try{snd("coin")}catch(e){}if(window.SHT=="dicas")openShop("dicas")}
+else{prof.coins=(prof.coins||0)+20;save("prof2",prof);coinUpd();try{snd("coin")}catch(e){}if(window.SHT=="coin")openCoinShop();adMsg(L3("+20 moedas!|+20 coins!|¡+20 monedas!"))}save("prof2",prof)}
+function adCard(kind){const d=adDay(),left=Math.max(0,ADS.DAY-d.n);return `<div class="adc"><i>🎬</i><div><b>${L3("VÍDEO GRÁTIS|FREE VIDEO|VIDEO GRATIS")}</b><small>${kind=="hu"?L3("Assista e ganhe +1 dica e +1 desfazer|Watch and get +1 hint and +1 undo|Mira y gana +1 pista y +1 deshacer"):L3("Assista e ganhe +20 moedas|Watch and get +20 coins|Mira y gana +20 monedas")} · ${left}/${ADS.DAY} ${L3("hoje|today|hoy")}</small></div><button class="adv" onclick="adWatch('${kind}')"${left?"":" disabled"}>▶ ${L3("ASSISTIR|WATCH|VER")}</button></div>`}
+function noAdsCard(){return noAds()?`<div class="adc ok"><i>✅</i><div><b>${L3("SEM ANÚNCIOS|NO ADS|SIN ANUNCIOS")}</b><small>${L3("Você joga sem propagandas entre as partidas.|You play with no ads between matches.|Juegas sin anuncios entre partidas.")}</small></div></div>`:`<div class="adc nad"><i>🚫</i><div><b>${L3("REMOVER ANÚNCIOS|REMOVE ADS|QUITAR ANUNCIOS")}</b><small>${L3("Nada de propaganda entre as partidas, para sempre.|No ads between matches, forever.|Sin anuncios entre partidas, para siempre.")}</small></div><button class="adn" onclick="playBuy('remove_ads')">R$ 9,99</button></div>`}
+{const _o=openShop;openShop=function(t){_o.apply(this,arguments);try{if((t||"dicas")=="dicas"){const a=dl.querySelector(".sec")||dl.querySelector(".pkg");if(a)a.insertAdjacentHTML("beforebegin",adCard("hu")+noAdsCard())}}catch(e){}}}
+{const _o=openCoinShop;openCoinShop=function(){_o.apply(this,arguments);try{const a=dl.querySelector(".cscroll");if(a)a.insertAdjacentHTML("beforebegin",adCard("c"))}catch(e){}}}
+/* intersticial: a cada 3 partidas terminadas (nunca durante a partida), só depois das 3 primeiras partidas do jogador */
+{const _e=endGame;endGame=function(w,why){const was=S.over;const r=_e.apply(this,arguments);try{if(was==null&&!noAds()&&[1,2,4,6].includes(mode)&&(prof.games||0)>3){prof.adg=(prof.adg||0)+1;save("prof2",prof);if(prof.adg%ADS.EVERY==0)ADS.pend=true}}catch(e){}return r}}
+function adInter(){try{if(!ADS.pend||noAds()||PROMO)return;const A=ADP();if(!A||!ADS.ir)return;ADS.pend=false;ADS.ir=false;A.showInterstitial().catch(()=>{}).finally(()=>setTimeout(adPrep,1500))}catch(e){}}
+{const _n=newGame;newGame=function(){adInter();return _n.apply(this,arguments)}}
+{const _m=menu;menu=function(){const r=_m.apply(this,arguments);setTimeout(adInter,300);return r}}
+setTimeout(adInit,3500);
 </script></body></html>
