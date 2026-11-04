@@ -559,7 +559,7 @@ dialog.chfs{background:#050303!important;padding:0!important;display:block!impor
 .cx2 .chfx{top:46%;z-index:4}
 .cxpanel{position:absolute;left:0;right:0;bottom:0;height:44%;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:64px 16px 16px;text-align:center;background:linear-gradient(rgba(8,4,2,0),#080402 24%);gap:2px}
 .cxpanel #chb{display:flex;flex-direction:column;gap:8px;width:100%;max-width:340px;margin-top:6px}
-#chb button[onclick="dl.close();menu()"]{display:none}
+
 .cxpanel .chhint{font-size:clamp(15px,5vw,22px)!important;letter-spacing:3px;margin:0}
 /* ===== tela de carregamento (arte) ===== */
 .spl{background:#0b0807!important;padding:0!important;gap:0!important;display:block!important;overflow:hidden}
@@ -1551,4 +1551,19 @@ function pvUse(id){try{cosEq().brd=id;save("prof2",prof);menuRt()}catch(e){}pvCl
 function pvClose(){pvUI("");PVB=null;$("game").classList.remove("pvw");const p=PVS;PVS=null;
 if(p){S=p.S;mode=p.mode;busy=p.busy;turns=p.turns;lastW=p.lastW;hint=p.hint;stack=p.stack;rec=p.rec;RP=p.RP}
 menu();setTimeout(()=>{if(!p||p.from=="shop")openShop("itens");else if(p.from=="coll")openColl("brd");else openCoinShop()},60)}
+</script><style>
+.cx2 .cxbg{bottom:22%!important;-webkit-mask-image:linear-gradient(#000 63%,transparent 73%);mask-image:linear-gradient(#000 63%,transparent 73%)}.cx2 .cxchest{top:34%!important;height:24%!important}.cx2 .chfx{top:34%!important}
+.cx2 .cxpanel{height:50%!important;padding-top:34px!important}
+.cxpanel #chb .chrw{display:flex;gap:8px}.cxpanel #chb .chrw button{flex:1;padding:9px 4px!important;font-size:12px!important;letter-spacing:1px!important}
+.cxpanel #chb button{margin:0!important}
+.cxpanel #chb button.chmn{background:linear-gradient(#2c1e14,#150d08)!important;border:1.5px solid #b8821c!important;color:#f3dfae!important}
+</style><script>
+{const _cb=chestBtns;chestBtns=function(){const q=document.createElement("div");q.innerHTML=_cb();const bs=[...q.querySelectorAll("button")];
+const oc=b=>b.getAttribute("onclick")||"";
+const share=bs.filter(b=>/shareWin/.test(oc(b))),menuB=bs.filter(b=>/menu\(\)/.test(oc(b))&&!/newGame|campGo|onQueue|onAgain|openCamp/.test(oc(b)));
+const prim=bs.filter(b=>/newGame|campGo|onQueue|onAgain|next|levels/.test(oc(b))&&!share.includes(b));
+const rest=bs.filter(b=>!share.includes(b)&&!menuB.includes(b)&&!prim.includes(b));
+let mb=menuB[0];if(!mb){mb=document.createElement("button");mb.setAttribute("onclick","dl.close();menu()")}
+mb.className=(mb.className+" chmn").trim();mb.textContent=ot("back");
+prim.forEach((b,i)=>{if(i==0)b.className=(b.className+" b-gold").trim()});const p0=prim.slice(0,1),r2=[...prim.slice(1),...rest];return p0.map(b=>b.outerHTML).join("")+(r2.length?`<div class="chrw">${r2.map(b=>b.outerHTML).join("")}</div>`:"")+mb.outerHTML+share.map(b=>b.outerHTML).join("")}}
 </script></body></html>
