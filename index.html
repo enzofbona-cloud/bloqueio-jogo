@@ -1112,7 +1112,7 @@ async function onPull(full){const mid=ON.mid;if(!mid||mode!=5)return;if(ON.synci
 const calm=v0==ON.ver&&!ON.sub&&!busy&&!ON.pump&&!ON.q.length;
 if(full===true||(calm&&(g.ply<ON.ply||g.moves.some(r=>r.player==ON.my)))){const f=await rpc("sync_match",{p_match:mid,p_ply:0,p_chat:ON.cid});if(f&&v0==ON.ver&&!ON.sub){onRebuild(f.moves);render();onAutoPass()}}else for(const r of g.moves)if(r.player!=ON.my&&r.ply>=ON.ply+ON.q.length)onEnq(r);
 for(const c of g.chat){if(c.player!=ON.my)bub("o",msgT(c.i));ON.cid=Math.max(ON.cid,c.id)}onClocks(g);
-if(g.status=="finished"&&S.over==null&&!ON.q.length&&!ON.pump){save("bqm",null);if(g.reason=="timeout")return endGame(g.winner==ON.my?0:1,"tmo");if(g.winner==ON.my){if(g.reason=="resign")bub("m",ot("oppres"));endGame(0,"opp")}else endGame(1,"res")}}catch(e){}finally{ON.syncing=false;if(ON.again){ON.again=false;onPull(true)}}}
+if(g.status=="finished"&&S.over==null&&!ON.q.length&&!ON.pump){save("bqm",null);if(g.reason=="timeout")return endGame(g.winner==ON.my?0:1,"tmo");if(g.winner==ON.my){if(g.reason=="resign"||g.reason=="abandon")bub("m",g.reason=="abandon"?L3("O adversário saiu da partida. Vitória sua!|Your opponent left the match. You win!|El rival abandonó la partida. ¡Ganaste!"):ot("oppres"));endGame(0,"opp")}else endGame(1,"res")}}catch(e){}finally{ON.syncing=false;if(ON.again){ON.again=false;onPull(true)}}}
 async function onTimeout(){if(ON.tmo||!ON.mid)return;ON.tmo=true;try{await rpc("claim_timeout",{p_match:ON.mid})}catch(e){}await onPull();setTimeout(()=>{ON.tmo=false},2000)}
 function onEnq(r){ON.q.push(r);onPump()}
 function onAutoPass(){if(mode!=5||S.over!=null||S.t!=0||busy||ON.pump)return;if(!moves(S,0).length&&S.w[0]==0){ON.ply++;ON.ver++;ON.sub++;rpc("submit_move",{p_match:ON.mid,p_action:"p,0,0"}).then(()=>{ON.sub=Math.max(0,ON.sub-1)}).catch(()=>{ON.sub=Math.max(0,ON.sub-1);onPull(true)});S.t=1;render()}}
@@ -1345,7 +1345,7 @@ $("b5").classList.toggle("nw2",!prof.daily.stars[todayKey()]);$("b1").classList.
 
 async function onEloInfo(){const el=$("eld");if(!el)return;try{let d=null;for(let n=0;n<6;n++){d=await rpc("sync_match",{p_match:ON.lastMid||ON.mid,p_ply:99999,p_chat:99999999});if(!$("eld"))return;if(d&&(d.kind=="friend"||d.kind=="casual"||d.kind=="blitz"||(ON.my?d.award1:d.award0)))break;await new Promise(r=>setTimeout(r,800))}if(!d||!$("eld"))return;
 if(d.kind=="friend"||d.kind=="casual"||d.kind=="blitz"){$("eld").innerHTML=`<small>${ot("noTr")}</small>`;if(chestN()>0&&dl.open){CHAFT=dl.innerHTML;chestScreen()}return}
-const a=ON.my?d.award1:d.award0;if(!a)return;rwShow(a,a.base>0||a.total>0);const b0=a.before,b1=a.trophies;
+const a=ON.my?d.award1:d.award0;if(!a)return;rwShow(a,d.winner!=null?d.winner==ON.my:(a.base>0||a.total>0));const b0=a.before,b1=a.trophies;
 ON.tr=b1;ON.st=a.wstreak;menuRt();if(S&&0){}}catch(e){}}
 function rwShow(a,win){const b0=a.before,b1=a.trophies,i0=lgIdx(b0),i1=lgIdx(b1),tot=a.total,xp=win?500:250;
 const rows=[];rows.push(`<div class="awl">${a.base>=0?ot("awW"):ot("awL")} ${a.base>0?"+":""}${a.base}</div>`);
@@ -1357,7 +1357,7 @@ const D0=1.9,ST=.55,tEnd=D0+rows.length*ST+.6;
 let h=`<div class="rwt${win?"":" lose"}">${win?T("win"):T("lose")}</div><div class="awn big${tot<0?" neg":""}" id="awn">${tot>0?"+":""}0 🏆</div><div class="rwr">${rows.map((r,i)=>r.replace('class="','style="animation-delay:'+(D0+i*ST)+'s" class="rwi ')).join("")}</div>
 <div class="awl" style="margin-top:14px">${LGI[i1]} ${lgN(i1)} · 🏆 <span id="awt">${b0}</span></div><i class="pbar"><b id="awb" style="width:${Math.round((i0==i1?lgP(b0):0)*100)}%"></b></i>`;
 h+=i1>=18?"":`<div class="awl" style="font-size:13px;opacity:.8">${ot("toNext",LG[i1+1]-b1,lgN(i1+1))}</div>`;
-h+=`<div id="rwb" class="rwb">`+(win?`<button class="b-wa" onclick="shareWin()">📤 ${L3("Compartilhar vitória|Share victory|Compartir victoria")}</button>`:"")+`<button class="b-wa" onclick="dl.close();onQueue('ranked')">${T("again")}</button><button onclick="dl.close();menu()">${T("menu")}</button>`+(ON.oppId&&AU.uid&&mode==5?`<div class="fr"><button class="b-sec" onclick="repDlg(ON.oppId,ON.nm,ON.lastMid||ON.mid)">🚩 ${L3("Denunciar|Report|Denunciar")}</button><button class="b-sec" onclick="blkDlg(ON.oppId,ON.nm)">⛔ ${L3("Bloquear|Block|Bloquear")}</button></div>`:"")+`</div>`;
+h+=`<div id="rwb" class="rwb">`+`<button class="b-wa" onclick="dl.close();onQueue('ranked')">${T("again")}</button><button onclick="dl.close();menu()">${T("menu")}</button>`+(ON.oppId&&AU.uid&&mode==5?`<button class="b-ok fadd" onclick="addOpp(this)">👥 ${esc(ot("frEnd",ON.nm))}</button>`:"")+(ON.oppId&&AU.uid&&mode==5?`<div class="fr"><button class="b-sec" onclick="repDlg(ON.oppId,ON.nm,ON.lastMid||ON.mid)">🚩 ${L3("Denunciar|Report|Denunciar")}</button><button class="b-sec" onclick="blkDlg(ON.oppId,ON.nm)">⛔ ${L3("Bloquear|Block|Bloquear")}</button></div>`:"")+(win?`<button class="b-wa" onclick="shareWin()">📤 ${L3("Compartilhar vitória|Share victory|Compartir victoria")}</button>`:"")+`</div>`;
 dl.innerHTML=h;dl.classList.add("rwd");if(!dl.open)dl.showModal();
 if(!window.RWC){window.RWC=1;dl.addEventListener("close",()=>{if(!dl.open)dl.classList.remove("rwd","chfs")})}
 let done=false;const fin=()=>{if(done)return;done=true;clearInterval(iv);clearTimeout(tb);const e=$("awn"),t=$("awt"),b=$("awb"),r=$("rwb");if(e){e.textContent=(tot>0?"+":"")+tot+" 🏆";e.style.transform=""}if(t)t.textContent=b1;if(b)b.style.width=Math.round(lgP(b1)*100)+"%";document.querySelectorAll(".rwi").forEach(x=>{x.style.animation="none";x.style.opacity=1;x.style.transform="none"});if(r){if(typeof chestN=="function"&&chestN()>0){CHAFT=r.innerHTML;chestScreen()}else r.classList.add("on")}};
@@ -1565,7 +1565,7 @@ const prim=bs.filter(b=>/newGame|campGo|onQueue|onAgain|next|levels/.test(oc(b))
 const rest=bs.filter(b=>!share.includes(b)&&!menuB.includes(b)&&!prim.includes(b));
 let mb=menuB[0];if(!mb){mb=document.createElement("button");mb.setAttribute("onclick","dl.close();menu()")}
 mb.className=(mb.className+" chmn").trim();mb.textContent=ot("back");
-prim.forEach((b,i)=>{if(i==0)b.className=(b.className+" b-gold").trim()});const p0=prim.slice(0,1),r2=[...prim.slice(1),...rest];return p0.map(b=>b.outerHTML).join("")+mb.outerHTML+share.map(b=>b.outerHTML).join("")}}
+prim.forEach((b,i)=>{if(i==0)b.className=(b.className+" b-gold").trim()});const p0=prim.slice(0,1),r2=[...prim.slice(1),...rest];const fa=bs.filter(b=>/addOpp|friendEnd/.test(oc(b)));return p0.map(b=>b.outerHTML).join("")+mb.outerHTML+fa.map(b=>b.outerHTML).join("")+share.map(b=>b.outerHTML).join("")}}
 </script><style>
 .adc{display:flex;align-items:center;gap:10px;text-align:left;margin:8px 0 10px;padding:10px 12px;border-radius:12px;border:1.5px solid #c99a3a;background:linear-gradient(90deg,#2a1a0c,#160d07);box-shadow:0 0 12px #ffb52a22}
 .adc i{font-style:normal;font-size:30px;flex:none}.adc div{flex:1;min-width:0}.adc b{display:block;font:700 14px Cinzel,serif;color:#ffe2a0;letter-spacing:.5px}.adc small{display:block;font:600 14px "Cormorant Garamond",serif;color:#e6d9bd;line-height:1.15}
@@ -1606,4 +1606,10 @@ function adInter(){try{if(!ADS.pend||noAds()||PROMO)return;const A=ADP();if(!A||
 {const _n=newGame;newGame=function(){adInter();return _n.apply(this,arguments)}}
 {const _m=menu;menu=function(){const r=_m.apply(this,arguments);setTimeout(adInter,300);return r}}
 setTimeout(adInit,3500);
+</script><style>#fae,button.fadd{background:linear-gradient(#2f7fd0,#1a4f8f)!important;border:1px solid #8cc4ff!important;color:#fff!important}button.fadd:disabled{opacity:.85;filter:saturate(.6)}</style><script>
+async function addOpp(b){const id=ON.oppId;if(!id||!b)return;b.disabled=true;const t0=b.textContent;b.textContent="…";
+try{await ensureAuth();const r=await rpc("friend_add",{p_uid:id});
+const m={sent:"✓ Pedido enviado!|✓ Request sent!|✓ ¡Solicitud enviada!",accepted:"✓ Agora vocês são amigos!|✓ You're now friends!|✓ ¡Ahora son amigos!",already:"✓ Vocês já são amigos|✓ Already friends|✓ Ya son amigos",limit:"Limite de pedidos atingido|Request limit reached|Límite de solicitudes"};
+b.textContent=L3(m[r]||"Não foi possível enviar|Couldn't send|No se pudo enviar");if(!m[r]||r=="limit")setTimeout(()=>{b.disabled=false;b.textContent=t0},2500);try{snd("ok")}catch(e){}}
+catch(e){b.textContent=L3("Sem conexão, tente de novo|No connection, try again|Sin conexión, intenta de nuevo");setTimeout(()=>{b.disabled=false;b.textContent=t0},2500)}}
 </script></body></html>
