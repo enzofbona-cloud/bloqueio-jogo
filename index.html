@@ -1565,5 +1565,5 @@ const prim=bs.filter(b=>/newGame|campGo|onQueue|onAgain|next|levels/.test(oc(b))
 const rest=bs.filter(b=>!share.includes(b)&&!menuB.includes(b)&&!prim.includes(b));
 let mb=menuB[0];if(!mb){mb=document.createElement("button");mb.setAttribute("onclick","dl.close();menu()")}
 mb.className=(mb.className+" chmn").trim();mb.textContent=ot("back");
-prim.forEach((b,i)=>{if(i==0)b.className=(b.className+" b-gold").trim()});const p0=prim.slice(0,1),r2=[...prim.slice(1),...rest];return p0.map(b=>b.outerHTML).join("")+(r2.length?`<div class="chrw">${r2.map(b=>b.outerHTML).join("")}</div>`:"")+mb.outerHTML+share.map(b=>b.outerHTML).join("")}}
+prim.forEach((b,i)=>{if(i==0)b.className=(b.className+" b-gold").trim()});const p0=prim.slice(0,1),r2=[...prim.slice(1),...rest];return p0.map(b=>b.outerHTML).join("")+mb.outerHTML+share.map(b=>b.outerHTML).join("")}}
 </script></body></html>
